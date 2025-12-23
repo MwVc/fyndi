@@ -3,11 +3,16 @@ require("dotenv").config();
 const cors = require("cors");
 const authRouter = require("./routes/auth");
 const servicesRouter = require("./routes/services");
+const cookieParser = require("cookie-parser");
 
 const app = express();
+
 const PORT = process.env.PORT;
 
+console.log(PORT);
+
 // middleware
+app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
 
