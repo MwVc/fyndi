@@ -1,6 +1,7 @@
 const pool = require("../db/index");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { signAccessToken, signRefreshToken } = require("../utilities/token");
 
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
@@ -32,6 +33,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
+  console.log("line 35:", res.cookie);
 
   try {
     // check if user exists
@@ -44,7 +46,6 @@ const loginUser = async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: "Invalid credentials" });
     }
-
     // compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
 
@@ -54,16 +55,28 @@ const loginUser = async (req, res) => {
 
     // generate JWT
     const payload = { id: user.id, role: user.role };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
 
-    res.json({
-      token,
-      user: { id: user.id, name: user.name, email: user.email },
-    });
+    // create tokens
+    const accessToken = signAccessToken(payload);
+    const refreshToken = signRefreshToken(payload);
+
+    // send tokens as HTTP-only cookies
+    res
+      .cookie("access_token", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        maxAge: 15 * 60 * 1000,
+      })
+      .cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+      .json({ message: "Logged in" });
   } catch (error) {
-    console.error(error.message);
+    console.error(error);
     res.status(500).json({ error: "Server error" });
   }
 };
