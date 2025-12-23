@@ -2,22 +2,23 @@ const jwt = require("jsonwebtoken");
 
 // middleware to verify JWT token
 const verifyToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  console.log(req.cookies);
+
+  const accessToken = req.cookies.access_token;
 
   // check if header exists and starts with 'Bearer'
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.json(401).json({ message: "No token provided" });
+  if (!accessToken) {
+    res.status(401).json({ message: "No token provided" });
+    return;
   }
-
-  const token = authHeader.split(" ")[1]; // extract token part after 'Bearer '
 
   try {
     // verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
 
     // Attach user info to request for downstream use
     req.user = decoded;
-    console.log(decoded);
+    console.log("decoded:", decoded);
     next();
   } catch (error) {
     console.error("Token verification error:", error.message);
