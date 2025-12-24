@@ -1,5 +1,4 @@
 const pool = require("../db/index");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { signAccessToken, signRefreshToken } = require("../utilities/token");
 
@@ -59,21 +58,24 @@ const loginUser = async (req, res) => {
     // create tokens
     const accessToken = signAccessToken(payload);
     const refreshToken = signRefreshToken(payload);
+    const csrfToken = crypto.randomUUID();
+    console.log(csrfToken);
 
     // send tokens as HTTP-only cookies
     res
       .cookie("access_token", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
+        sameSite: "lax",
         maxAge: 15 * 60 * 1000,
       })
       .cookie("refresh_token", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
+        sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
+      .cookie("csrf_token", csrfToken, { httpOnly: false, sameSite: lax })
       .json({ message: "Logged in" });
   } catch (error) {
     console.error(error);
