@@ -75,7 +75,7 @@ const loginUser = async (req, res) => {
         sameSite: "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
-      .cookie("csrf_token", csrfToken, { httpOnly: false, sameSite: lax })
+      .cookie("csrf_token", csrfToken, { httpOnly: false, sameSite: "lax" })
       .json({ message: "Logged in" });
   } catch (error) {
     console.error(error);
