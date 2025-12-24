@@ -5,10 +5,8 @@ const verifyToken = require("../middleware/verifyToken");
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.get("/protected", verifyToken, (req, res) => {
-  res
-    .status(200)
-    .json({ message: `Hello user ${req.user.id}, you are authenticated` });
-});
+router.get("/protected", verifyToken, (req, res) =>
+  res.status(200).json({ success: "true" })
+);
 
 module.exports = router;
