@@ -1,17 +1,13 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import Layout from "./pages/Layout";
 
-function App() {
-  const [count, setCount] = useState(0);
-  const increase = () => setCount((prevCount) => prevCount + 1);
-
-  return (
-    <div>
-      Count: {count}
-      <button className="button" onClick={increase}>
-        Add
-      </button>
-    </div>
+const App = () => {
+  useEffect(
+    () => document.documentElement.setAttribute("data-theme", "light"),
+    []
   );
-}
+
+  return <Layout />;
+};
 
 export default App;
