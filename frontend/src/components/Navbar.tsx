@@ -1,6 +1,6 @@
 const Navbar = () => {
   return (
-    <div className="navbar bg-base-100 shadow-sm border border-red-500">
+    <div className="navbar bg-base-100 shadow-sm">
       {/* Container to center content */}
       <div className="w-11/12 md:w-7/12 mx-auto flex justify-between items-center">
         {/* Left side: brand */}
@@ -13,7 +13,7 @@ const Navbar = () => {
           <input
             type="text"
             placeholder="Search"
-            className="input input-bordered w-24 md:w-48"
+            className="input input-bordered hidden sm:block sm:w-48"
           />
 
           {/* Avatar Dropdown */}
@@ -31,9 +31,17 @@ const Navbar = () => {
               className="menu menu-sm dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
             >
               <li>
-                <a className="justify-between">
+                <a
+                  className="justify-between"
+                  onClick={() =>
+                    (
+                      document.getElementById(
+                        "login_modal"
+                      ) as HTMLDialogElement
+                    )?.showModal()
+                  }
+                >
                   Profile
-                  <span className="badge">New</span>
                 </a>
               </li>
               <li>
