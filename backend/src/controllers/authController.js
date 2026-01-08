@@ -1,8 +1,8 @@
-const pool = require("../db/index");
-const bcrypt = require("bcrypt");
-const { signAccessToken, signRefreshToken } = require("../utilities/token");
+import pool from "../db/index";
+import bcrypt from "bcrypt";
+import { signAccessToken, signRefreshToken } from "../utilities/token";
 
-const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
@@ -30,7 +30,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   console.log("line 35:", res.cookie);
 
@@ -82,5 +82,3 @@ const loginUser = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
-module.exports = { registerUser, loginUser };

@@ -2,9 +2,12 @@
   "name": "fyndi",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "main": "dist/app.js",
   "scripts": {
-    "server": "nodemon app"
+    "dev": "nodemon --watch src --exec node --loader ts-node/esm src/app.ts",
+    "build": "tsc",
+    "start": "nodemon dist/app.js"
   },
   "keywords": [],
   "author": "Victor Mwadime <victormwadime@gmail.com>",
@@ -19,6 +22,15 @@
     "pg": "^8.16.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.0.3",
+    "@types/pg": "^8.16.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
