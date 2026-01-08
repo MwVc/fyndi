@@ -1,8 +1,11 @@
-import pool from "../db/index";
+import pool from "../db/index.js";
 import bcrypt from "bcrypt";
-import { signAccessToken, signRefreshToken } from "../utilities/token";
+import { signAccessToken, signRefreshToken } from "../utilities/token.js";
 
-export const registerUser = async (req, res) => {
+//importing types
+import type { Request, Response } from "express";
+
+export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
   try {
@@ -24,13 +27,13 @@ export const registerUser = async (req, res) => {
     );
 
     res.status(201).json({ user: newUser.rows[0] });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error.message);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-export const loginUser = async (req, res) => {
+export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   console.log("line 35:", res.cookie);
 
