@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/app.js",
   "scripts": {
-    "dev": "nodemon --watch src --exec node --loader ts-node/esm src/app.ts",
+    "dev": "nodemon --watch src --exec node --loader ts-node/esm src/server.ts",
     "build": "tsc",
     "start": "nodemon dist/app.js"
   },
