@@ -7,10 +7,10 @@ export interface JwtPayload {
 }
 
 export const signAccessToken = (payload: JwtPayload) => {
-  if (!process.env.JWT_SECRET) {
+  if (!process.env.JWT_ACCESS_SECRET) {
     throw new Error("JWT_SECRET mising");
   }
-  return jwt.sign(payload, process.env.JWT_SECRET, {
+  return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
     expiresIn: "1m",
   });
 };
