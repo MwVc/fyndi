@@ -3,12 +3,23 @@ import bcrypt from "bcrypt";
 import { signAccessToken, signRefreshToken } from "../utilities/token.js";
 
 //importing types
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
+interface RegisterUserData {
+  name: string;
+  email: string;
+  password: string;
+}
+
+interface LoginUserData {
+  email: string;
+  password: string;
+}
 
 export const registerUser = async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
+  const { name, email, password }: RegisterUserData = req.body;
 
   try {
+    // check if user exists
     const existingUser = await pool.query(
       "SELECT * FROM users WHERE email = $1",
       [email]
@@ -18,9 +29,11 @@ export const registerUser = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "User alredy exists" });
     }
 
+    // hash password
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    // insert new user into database
     const newUser = await pool.query(
       "INSERT INTO users (full_name, email, password) VALUES ($1, $2, $3) RETURNING *",
       [name, email, hashedPassword]
@@ -33,9 +46,13 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 };
 
-export const loginUser = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  console.log("line 35:", res.cookie);
+export const loginUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // destructure email and password from req.body
+  const { email, password }: LoginUserData = req.body;
 
   try {
     // check if user exists
@@ -52,7 +69,7 @@ export const loginUser = async (req: Request, res: Response) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ error: "Invalid password" });
+      return res.status(400).json({ error: "Invalid credentials" });
     }
 
     // generate JWT
@@ -81,6 +98,7 @@ export const loginUser = async (req: Request, res: Response) => {
       .cookie("csrf_token", csrfToken, { httpOnly: false, sameSite: "lax" })
       .json({ message: "Logged in" });
   } catch (error) {
+    next(error);
     console.error(error);
     res.status(500).json({ error: "Server error" });
   }
