@@ -1,4 +1,10 @@
+import { useState } from "react";
+
 const Navbar = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const login = () => setIsLoggedIn(true);
+  const logout = () => setIsLoggedIn(false);
   return (
     <div className="navbar bg-base-100 shadow-sm">
       {/* Container to center content */}
@@ -30,26 +36,34 @@ const Navbar = () => {
               tabIndex={0}
               className="menu menu-sm dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
             >
-              <li>
-                <a
-                  className="justify-between"
-                  onClick={() =>
-                    (
-                      document.getElementById(
-                        "login_modal"
-                      ) as HTMLDialogElement
-                    )?.showModal()
-                  }
-                >
-                  Profile
-                </a>
-              </li>
-              <li>
-                <a>Settings</a>
-              </li>
-              <li>
-                <a>Logout</a>
-              </li>
+              {isLoggedIn ? (
+                <>
+                  <li>
+                    <a
+                      className="justify-between"
+                      onClick={() =>
+                        (
+                          document.getElementById(
+                            "login_modal"
+                          ) as HTMLDialogElement
+                        )?.showModal()
+                      }
+                    >
+                      Profile
+                    </a>
+                  </li>
+                  <li>
+                    <a>Settings</a>
+                  </li>
+                  <li>
+                    <a onClick={logout}>Logout</a>
+                  </li>{" "}
+                </>
+              ) : (
+                <li>
+                  <a onClick={login}>Log In</a>
+                </li>
+              )}
             </ul>
           </div>
         </div>
