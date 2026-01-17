@@ -22,7 +22,7 @@ export const registerUser = async (req: Request, res: Response) => {
     // check if user exists
     const existingUser = await pool.query(
       "SELECT * FROM users WHERE email = $1",
-      [email]
+      [email],
     );
 
     if (existingUser.rows.length > 0) {
@@ -36,7 +36,7 @@ export const registerUser = async (req: Request, res: Response) => {
     // insert new user into database
     const newUser = await pool.query(
       "INSERT INTO users (full_name, email, password) VALUES ($1, $2, $3) RETURNING *",
-      [name, email, hashedPassword]
+      [name, email, hashedPassword],
     );
 
     res.status(201).json({ user: newUser.rows[0] });
@@ -49,7 +49,7 @@ export const registerUser = async (req: Request, res: Response) => {
 export const loginUser = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   // destructure email and password from req.body
   const { email, password }: LoginUserData = req.body;
@@ -85,17 +85,20 @@ export const loginUser = async (
     res
       .cookie("access_token", accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production", // htpps
         sameSite: "none",
         maxAge: 15 * 60 * 1000,
       })
       .cookie("refresh_token", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production", // https
         sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
-      .cookie("csrf_token", csrfToken, { httpOnly: false, sameSite: "none" })
+      .cookie("csrf_token", csrfToken, {
+        httpOnly: false, // exposing to client side js
+        sameSite: "none", // cross-site request
+      })
       .json({ message: "Logged in" });
   } catch (error) {
     next(error);
