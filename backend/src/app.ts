@@ -1,6 +1,6 @@
 import express from "express";
 import type { Request, Response } from "express";
-import cors from "cors";
+import cors from "./utilities/cors.js";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/authRouter.js";
 import { errorMiddleware } from "./middleware/errorMiddleware.js";
@@ -9,7 +9,7 @@ const app = express();
 
 // middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors);
 app.use(cookieParser());
 
 // routes
