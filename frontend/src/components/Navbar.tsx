@@ -1,10 +1,17 @@
 import { useState } from "react";
+import { onLogout } from "../api/auth";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const login = () => setIsLoggedIn(true);
-  const logout = () => setIsLoggedIn(false);
+  const logout = async () => {
+    const response = await onLogout();
+    if (response) {
+      setIsLoggedIn(false);
+      console.log(response);
+    }
+  };
   return (
     <div className="navbar bg-base-100 shadow-sm">
       {/* Container to center content */}
@@ -39,18 +46,7 @@ const Navbar = () => {
               {isLoggedIn ? (
                 <>
                   <li>
-                    <a
-                      className="justify-between"
-                      onClick={() =>
-                        (
-                          document.getElementById(
-                            "login_modal"
-                          ) as HTMLDialogElement
-                        )?.showModal()
-                      }
-                    >
-                      Profile
-                    </a>
+                    <a className="justify-between">Profile</a>
                   </li>
                   <li>
                     <a>Settings</a>
@@ -61,7 +57,18 @@ const Navbar = () => {
                 </>
               ) : (
                 <li>
-                  <a onClick={login}>Log In</a>
+                  <a
+                    onClick={() => {
+                      (
+                        document.getElementById(
+                          "login_modal",
+                        ) as HTMLDialogElement
+                      )?.showModal();
+                      login();
+                    }}
+                  >
+                    Log In
+                  </a>
                 </li>
               )}
             </ul>
