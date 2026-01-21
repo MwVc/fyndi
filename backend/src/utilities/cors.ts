@@ -1,17 +1,18 @@
 import cors from "cors";
 
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = ["https://localhost:5173"];
 
 const corsOptions: cors.CorsOptions = {
   // allow req with no origin like api clients(dev mode only)
-  origin: (origin, callback) => {
+  origin: (origin: any, callback) => {
     if (!origin) {
       return callback(null, true);
     }
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error("Blocked by CORS"));
+      console.log("Blocking a request");
     }
   },
   credentials: true,
