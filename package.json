@@ -1,0 +1,21 @@
+{
+  "name": "fyndi",
+  "version": "1.0.0",
+  "description": "Fyndi is a **fullstack platform** designed to connect **clients** with **fundis** (skilled workers) in a secure, transparent and efficient way. It helps users **find trusted professionals** and **manage jobs**.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MwVc/fyndi.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MwVc/fyndi/issues"
+  },
+  "homepage": "https://github.com/MwVc/fyndi#readme"
+}
