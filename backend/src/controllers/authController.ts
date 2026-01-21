@@ -105,6 +105,29 @@ export const loginUser = async (
   } catch (error) {
     next(error);
     console.error(error);
-    res.status(500).json({ error: "Server error" });
   }
+};
+
+export const logoutUser = (req: Request, res: Response) => {
+  // clear all cookies
+  res
+    .cookie("access_token", "", {
+      httpOnly: true, // client side js can't read
+      secure: true, // htpps
+      sameSite: "none",
+      maxAge: 15 * 60 * 1000,
+    })
+    .cookie("refresh_token", "", {
+      httpOnly: true, // client side js can't read
+      secure: true, // https
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+    .cookie("csrf_token", "", {
+      httpOnly: false, // exposing to client side js
+      sameSite: "none", // cross-site request
+      secure: true,
+    })
+    .status(200)
+    .json({ message: "Logged out" });
 };
