@@ -84,21 +84,23 @@ export const loginUser = async (
     // send tokens as HTTP-only cookies
     res
       .cookie("access_token", accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // htpps
+        httpOnly: true, // client side js can't read
+        secure: true, // htpps
         sameSite: "none",
         maxAge: 15 * 60 * 1000,
       })
       .cookie("refresh_token", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // https
+        httpOnly: true, // client side js can't read
+        secure: true, // https
         sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
       .cookie("csrf_token", csrfToken, {
         httpOnly: false, // exposing to client side js
         sameSite: "none", // cross-site request
+        secure: true,
       })
+      .status(200)
       .json({ message: "Logged in" });
   } catch (error) {
     next(error);
