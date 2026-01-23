@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useContext } from "react";
 import { onLogout } from "../api/auth";
+import { UserContext } from "../context/UserProvider";
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedin, setIsLoggedin } = useContext(UserContext);
 
-  const login = () => setIsLoggedIn(true);
   const logout = async () => {
     const response = await onLogout();
     if (response) {
-      setIsLoggedIn(false);
+      setIsLoggedin(false);
       console.log(response);
     }
   };
@@ -43,7 +43,7 @@ const Navbar = () => {
               tabIndex={0}
               className="menu menu-sm dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
             >
-              {isLoggedIn ? (
+              {isLoggedin ? (
                 <>
                   <li>
                     <a className="justify-between">Profile</a>
@@ -64,7 +64,6 @@ const Navbar = () => {
                           "login_modal",
                         ) as HTMLDialogElement
                       )?.showModal();
-                      login();
                     }}
                   >
                     Log In
