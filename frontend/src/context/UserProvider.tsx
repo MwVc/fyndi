@@ -7,23 +7,23 @@ import {
 import { createContext } from "react";
 
 interface UserContextType {
-  loggedin: boolean;
+  isLoggedin: boolean;
   setIsLoggedin: Dispatch<SetStateAction<boolean>>;
   role: "user" | "admin";
 }
 
-const UserContext = createContext<UserContextType>({
-  loggedin: false,
+export const UserContext = createContext<UserContextType>({
+  isLoggedin: false,
   setIsLoggedin: () => {},
   role: "user",
 });
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
-  const [loggedin, setIsLoggedin] = useState(false);
+  const [isLoggedin, setIsLoggedin] = useState(false);
   const role = "user";
 
   return (
-    <UserContext.Provider value={{ loggedin, setIsLoggedin, role }}>
+    <UserContext.Provider value={{ isLoggedin, setIsLoggedin, role }}>
       {children}
     </UserContext.Provider>
   );
