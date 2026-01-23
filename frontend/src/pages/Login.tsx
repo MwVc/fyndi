@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { onLogin } from "../api/auth";
+import { UserContext } from "../context/UserProvider";
 
-type LoginModalProps = {
-  onLogin: (email: string, password: string) => Promise<void>;
-};
+const Login = () => {
+  const { setIsLoggedin } = useContext(UserContext);
 
-const Login = ({ onLogin }: LoginModalProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -13,13 +13,21 @@ const Login = ({ onLogin }: LoginModalProps) => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
-    setError(null);
 
     try {
-      await onLogin(email, password);
-      (document.getElementById("login_modal") as HTMLDialogElement)?.close();
-    } catch (error) {
-      setError("Invalid email or password");
+      const response = await onLogin(email, password);
+      if (response?.ok) {
+        setIsLoggedin(true);
+        (document.getElementById("login_modal") as HTMLDialogElement)?.close();
+        setError(null);
+      } else {
+        setError("Invalid email or password");
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
+      setError("Unknown error");
     } finally {
       setIsLoading(false);
     }
