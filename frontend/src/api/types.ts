@@ -1,17 +1,23 @@
 "T: some data type that we dont know yet";
 export type ApiSuccess<T> = {
   ok: true;
+  message: string;
   data: T;
+  error: null;
+  meta: {
+    timestamp: string;
+  };
 };
 
 // a failed API response
 export type ApiError = {
-  ok: false; // tells the UI this failed
+  success: false; // tells the UI this failed
+  message: string; // error message
+  data: null;
   error: {
-    message: string; // error message
-    status?: number; // optional HTTP status code
+    details?: string; // optional HTTP status code
     code?: string; // optional app-specific error code
   };
 };
 
-export type ApiResult<T> = ApiSuccess<T> | ApiError;
+export type ApiResult<T> = ApiSuccess<T> | ApiError; // union type
