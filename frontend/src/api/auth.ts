@@ -1,15 +1,13 @@
+import apiClient from "./apiClient";
+
 export const onLogin = async (email: string, password: string) => {
   try {
-    const response = await fetch("https://localhost:5050/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include", // include cookies
-      body: JSON.stringify({ email, password }),
+    const axiosResponse = await apiClient.post("/auth/login", {
+      email: email,
+      password: password,
     });
 
-    console.log(response);
-
-    console.log(document.cookie);
+    console.log(axiosResponse);
   } catch (error) {
     console.log(error);
   }
