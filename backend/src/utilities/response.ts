@@ -1,28 +1,36 @@
 import type { Response } from "express";
 
-export const successResponse = <T>(res: Response, data: T, message = "") => {
-  return res.json({
+// standardized success API response
+export const successResponse = (
+  res: Response,
+  statusCode: number,
+  data: unknown,
+  message = "",
+) => {
+  return res.status(statusCode).json({
     success: true,
-    data,
+    data, // response data
     error: null,
-    message,
+    message, // optional success message
   });
 };
 
+// standardized error API response
 export const errorResponse = (
   res: Response,
-  code = 500,
-  message = "Server Error",
-  details = null,
+  statusCode: number,
+  errorCode: string,
+  message: string = "Server Error",
+  details: unknown = null,
 ) => {
-  return res.status(code).json({
+  return res.status(statusCode).json({
     success: false,
     data: null,
     error: {
-      code,
-      message,
+      code: errorCode, // application error code
+      message, // human readable explanation
       details,
     },
-    message: "",
+    message: "", // keep top-level message empty for errors
   });
 };
