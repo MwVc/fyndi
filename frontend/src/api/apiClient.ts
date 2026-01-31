@@ -1,26 +1,20 @@
-import axios, { AxiosError } from "axios";
-
-type ApiResponse<T> = {
-  success: boolean;
-  data?: T;
-  message?: string;
-  status?: number;
-};
+import axios from "axios";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   timeout: 5000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true, // allow cookies / auth headers to be sent
 });
 
+// INTERCEPTOR intercepts every response before it reaches the calling code
 apiClient.interceptors.response.use(
-  (response: ApiResponse) => {
-    return { success: true, data: response.data };
+  (response) => {
+    console.log(response);
+    return response;
   },
-  (error: AxiosError) => {
-    return Promise.reject({
-      success: false,
-      message: error.message || "Internal Server Error",
-      status: error.response?.status || 500,
-    });
-  },
+  (error) => Promise.reject(error),
 );
+export default apiClient;
