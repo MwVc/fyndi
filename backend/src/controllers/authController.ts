@@ -1,6 +1,7 @@
 import pool from "../db/index.js";
 import bcrypt from "bcrypt";
 import { signAccessToken, signRefreshToken } from "../utilities/token.js";
+import { successResponse, errorResponse } from "../utilities/response.js";
 
 //importing types
 import type { NextFunction, Request, Response } from "express";
@@ -26,7 +27,7 @@ export const registerUser = async (req: Request, res: Response) => {
     );
 
     if (existingUser.rows.length > 0) {
-      return res.status(400).json({ error: "User alredy exists" });
+      return errorResponse(res, 400, "User already exists");
     }
 
     // hash password
@@ -53,6 +54,7 @@ export const loginUser = async (
 ) => {
   // destructure email and password from req.body
   const { email, password }: LoginUserData = req.body;
+  console.log(email, password);
 
   try {
     // check if user exists
@@ -63,13 +65,13 @@ export const loginUser = async (
     const user = result.rows[0];
 
     if (!user) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res.status(400).json({ error: "Invalid email" });
     }
     // compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res.status(400).json({ error: "Invalid password" });
     }
 
     // generate JWT
