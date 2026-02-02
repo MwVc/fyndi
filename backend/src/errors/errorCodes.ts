@@ -40,3 +40,11 @@ export const SystemErrorCodes = {
   EXTERNAL_SERVICE_FAILURE: "EXTERNAL_SERVICE_FAILURE",
   TIMEOUT_ERROR: "TIMEOUT_ERROR",
 } as const;
+
+//{[typeof obj} get the objects type -> {keyof typeof obj}get a union of the keys -> {obj[keyof typeof obj]}get a union if the values at those keys
+export type ErrorCode =
+  | (typeof AuthErrorCodes)[keyof typeof AuthErrorCodes]
+  | (typeof UserErrorCodes)[keyof typeof UserErrorCodes]
+  | (typeof ValidationErrorCodes)[keyof typeof ValidationErrorCodes]
+  | (typeof PermissionErrorCodes)[keyof typeof PermissionErrorCodes]
+  | (typeof SystemErrorCodes)[keyof typeof SystemErrorCodes];
