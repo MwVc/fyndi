@@ -1,17 +1,21 @@
-import type { NextFunction, Response, Request } from "express";
-
-interface MyError extends Error {
-  status?: number;
-}
+import { type NextFunction, type Response, type Request } from "express";
+import ApiError from "../utilities/customErrors.js";
+import { errorResponse } from "../utilities/response.js";
 
 export const errorMiddleware = (
-  err: MyError,
+  err: unknown,
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  console.error(err.message);
-  res.status(err.status || 500).json({
-    message: err.message || "Internal Server Error",
-  });
+  // handle internal ApiError
+  if (err instanceof ApiError) {
+    console.log("The error came from ApiError");
+
+    errorResponse(res, err.statusCode, err.errorCode, err.message);
+    console.log(err);
+    return;
+  }
+
+  errorResponse(res, 500, "INTERNAL SERVER ERROR", "Internal Server Error");
 };
