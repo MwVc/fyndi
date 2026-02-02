@@ -18,7 +18,10 @@ export const errorMiddleware = (
     return;
   }
 
+  console.log(err); // debugging
+
   errorResponse(
+    // fallback error for non ApiError
     res,
     500,
     SystemErrorCodes.INTERNAL_SERVER_ERROR,
