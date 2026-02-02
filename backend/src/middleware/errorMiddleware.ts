@@ -1,6 +1,7 @@
 import { type NextFunction, type Response, type Request } from "express";
 import ApiError from "../errors/customErrors.js";
 import { errorResponse } from "../utilities/response.js";
+import { SystemErrorCodes } from "../errors/errorCodes.js";
 
 export const errorMiddleware = (
   err: unknown,
@@ -17,5 +18,10 @@ export const errorMiddleware = (
     return;
   }
 
-  errorResponse(res, 500, "INTERNAL SERVER ERROR", "Internal Server Error");
+  errorResponse(
+    res,
+    500,
+    SystemErrorCodes.INTERNAL_SERVER_ERROR,
+    "Internal Server Error",
+  );
 };
