@@ -1,6 +1,6 @@
 import pool from "../db/index.js";
 import bcrypt from "bcrypt";
-import { signAccessToken, signRefreshToken } from "../utilities/token.js";
+import { signAccessToken, signRefreshToken } from "../auth/token.js";
 import { successResponse, errorResponse } from "../utilities/response.js";
 
 //importing types
