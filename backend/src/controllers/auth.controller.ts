@@ -1,6 +1,6 @@
 import pool from "../db/index.js";
 import bcrypt from "bcrypt";
-import { signAccessToken, signRefreshToken } from "../auth/token.js";
+import { signAccessToken, signRefreshToken } from "../auth/token.auth.js";
 import { successResponse, errorResponse } from "../utilities/response.js";
 
 //importing types
@@ -52,7 +52,7 @@ export const registerUser = async (req: Request, res: Response) => {
       successResponse(res, 201, null, "User Created Successfully");
     }
 
-    throw new ApiError();
+    // throw new ApiError();
     // res.status(201).json({ user: newUser.rows[0] });
   } catch (error: any) {
     console.error(error.message);
