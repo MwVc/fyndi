@@ -5,8 +5,8 @@ import { successResponse, errorResponse } from "../utilities/response.js";
 
 //importing types
 import type { NextFunction, Request, Response } from "express";
-import { UserErrorCodes } from "../errors/errorCodes.js";
-import ApiError from "../errors/customErrors.js";
+import { UserErrorCodes } from "../errors/code.errors.js";
+import ApiError from "../errors/api.errors.js";
 interface RegisterUserData {
   name: string;
   email: string;

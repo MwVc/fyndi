@@ -1,5 +1,5 @@
 import type { Response } from "express";
-import type { ErrorCode } from "../errors/errorCodes.js";
+import type { ErrorCode } from "../errors/code.errors.js";
 
 // standardized success API response
 export const successResponse = (
