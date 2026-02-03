@@ -1,4 +1,4 @@
-import type { ErrorCode } from "./errorCodes.js";
+import type { ErrorCode } from "./code.errors.js";
 
 class ApiError extends Error {
   public statusCode: number;
