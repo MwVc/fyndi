@@ -1,11 +1,12 @@
 import type { Response } from "express";
+import type { ErrorCode } from "../errors/errorCodes.js";
 
 // standardized success API response
 export const successResponse = (
   res: Response,
   statusCode: number,
   data: unknown,
-  message = "",
+  message: string,
 ) => {
   return res.status(statusCode).json({
     success: true,
@@ -19,8 +20,8 @@ export const successResponse = (
 export const errorResponse = (
   res: Response,
   statusCode: number,
-  errorCode: string,
-  message: string = "Server Error",
+  errorCode: ErrorCode,
+  message: string,
   details: unknown = null,
 ) => {
   return res.status(statusCode).json({
@@ -28,7 +29,7 @@ export const errorResponse = (
     data: null,
     error: {
       code: errorCode, // application error code
-      message, // human readable explanation
+      message: message ?? "Internal Server Error", // human readable explanation
       details,
     },
     message: "", // keep top-level message empty for errors
