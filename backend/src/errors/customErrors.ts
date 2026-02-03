@@ -1,11 +1,13 @@
+import type { ErrorCode } from "./errorCodes.js";
+
 class ApiError extends Error {
   public statusCode: number;
-  public errorCode: string;
+  public errorCode: ErrorCode;
   public details: unknown;
 
   constructor(
     statusCode: number,
-    errorCode: string,
+    errorCode: ErrorCode,
     message: string,
     details?: unknown,
   ) {
