@@ -5,6 +5,8 @@ import { successResponse, errorResponse } from "../utilities/response.js";
 
 //importing types
 import type { NextFunction, Request, Response } from "express";
+import { UserErrorCodes } from "../errors/errorCodes.js";
+import ApiError from "../errors/customErrors.js";
 interface RegisterUserData {
   name: string;
   email: string;
@@ -18,6 +20,7 @@ interface LoginUserData {
 
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password }: RegisterUserData = req.body;
+  console.log(req.body);
 
   try {
     // check if user exists
@@ -27,7 +30,12 @@ export const registerUser = async (req: Request, res: Response) => {
     );
 
     if (existingUser.rows.length > 0) {
-      return errorResponse(res, 400, "User already exists");
+      return errorResponse(
+        res,
+        400,
+        UserErrorCodes.ALREADY_EXISTS,
+        "User already exists",
+      );
     }
 
     // hash password
@@ -35,12 +43,17 @@ export const registerUser = async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     // insert new user into database
-    const newUser = await pool.query(
+    const databaseResponse = await pool.query(
       "INSERT INTO users (full_name, email, password) VALUES ($1, $2, $3) RETURNING *",
       [name, email, hashedPassword],
     );
 
-    res.status(201).json({ user: newUser.rows[0] });
+    if (databaseResponse.rows[0]) {
+      successResponse(res, 201, null, "User Created Successfully");
+    }
+
+    throw new ApiError();
+    // res.status(201).json({ user: newUser.rows[0] });
   } catch (error: any) {
     console.error(error.message);
     res.status(500).json({ error: "Server error" });
