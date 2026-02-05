@@ -5,7 +5,11 @@ import { successResponse, errorResponse } from "../utilities/response.js";
 
 //importing types
 import type { NextFunction, Request, Response } from "express";
-import { UserErrorCodes } from "../errors/code.errors.js";
+import {
+  SystemErrorCodes,
+  UserErrorCodes,
+  ValidationErrorCodes,
+} from "../errors/code.errors.js";
 import ApiError from "../errors/api.errors.js";
 interface RegisterUserData {
   name: string;
@@ -56,7 +60,13 @@ export const registerUser = async (req: Request, res: Response) => {
     // res.status(201).json({ user: newUser.rows[0] });
   } catch (error: any) {
     console.error(error.message);
-    res.status(500).json({ error: "Server error" });
+    // res.status(500).json({ error: "Server error" });
+    errorResponse(
+      res,
+      500,
+      SystemErrorCodes.INTERNAL_SERVER_ERROR,
+      "Internal Server Error",
+    );
   }
 };
 
@@ -78,7 +88,13 @@ export const loginUser = async (
     const user = result.rows[0];
 
     if (!user) {
-      return res.status(400).json({ error: "Invalid email" });
+      // return res.status(400).json({ error: "Invalid email" });
+      return errorResponse(
+        res,
+        400,
+        ValidationErrorCodes.INVALID_EMAIL_FORMAT,
+        "Invalid email",
+      );
     }
     // compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
