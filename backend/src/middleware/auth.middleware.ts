@@ -7,4 +7,5 @@ export const verifyToken = (
 ) => {
   // destructure cookies to get the tokens
   console.log(req.cookies);
+  next();
 };
