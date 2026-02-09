@@ -39,6 +39,8 @@ export const SystemErrorCodes = {
   DATABASE_ERROR: "DATABASE_ERROR",
   EXTERNAL_SERVICE_FAILURE: "EXTERNAL_SERVICE_FAILURE",
   TIMEOUT_ERROR: "TIMEOUT_ERROR",
+  PASSWORD_HASH_FAILED: "PASSWORD_HASH_FAILED",
+  PASSWORD_COMPARE_FAILED: "PASSWORD_COMPARE_FAILED",
 } as const;
 
 //{[typeof obj} get the objects type -> {keyof typeof obj}get a union of the keys -> {obj[keyof typeof obj]}get a union if the values at those keys
