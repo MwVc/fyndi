@@ -1,5 +1,3 @@
-import pool from "../db/index.js";
-import bcrypt from "bcrypt";
 import { signAccessToken, signRefreshToken } from "../auth/token.auth.js";
 import { successResponse, errorResponse } from "../utilities/response.js";
 
@@ -11,8 +9,15 @@ import {
   ValidationErrorCodes,
 } from "../errors/code.errors.js";
 import ApiError from "../errors/api.errors.js";
+
+// import { compare } from "bcrypt";
+
+//services
+import { users } from "../services/users.services.js";
+
 interface RegisterUserData {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
 }
@@ -23,51 +28,46 @@ interface LoginUserData {
 }
 
 export const registerUser = async (req: Request, res: Response) => {
-  const { name, email, password }: RegisterUserData = req.body;
-  console.log(req.body);
+  const data = req.body as RegisterUserData;
 
-  try {
-    // check if user exists
-    const existingUser = await pool.query(
-      "SELECT * FROM users WHERE email = $1",
-      [email],
-    );
-
-    if (existingUser.rows.length > 0) {
-      return errorResponse(
-        res,
-        400,
-        UserErrorCodes.ALREADY_EXISTS,
-        "User already exists",
-      );
-    }
-
-    // hash password
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // insert new user into database
-    const databaseResponse = await pool.query(
-      "INSERT INTO users (full_name, email, password) VALUES ($1, $2, $3) RETURNING *",
-      [name, email, hashedPassword],
-    );
-
-    if (databaseResponse.rows[0]) {
-      successResponse(res, 201, null, "User Created Successfully");
-    }
-
-    // throw new ApiError();
-    // res.status(201).json({ user: newUser.rows[0] });
-  } catch (error: any) {
-    console.error(error.message);
-    // res.status(500).json({ error: "Server error" });
-    errorResponse(
-      res,
-      500,
-      SystemErrorCodes.INTERNAL_SERVER_ERROR,
-      "Internal Server Error",
-    );
-  }
+  const user = await users.create(data);
+  successResponse(res, 201, user, "user created successfully");
+  // try {
+  //--------REDUNDANT---------
+  // check if user exists
+  // const existingUser = await pool.query(
+  //   "SELECT * FROM users WHERE email = $1",
+  //   [email],
+  // );
+  // if (existingUser.rows.length > 0) {
+  //   return errorResponse(
+  //     res,
+  //     400,
+  //     UserErrorCodes.ALREADY_EXISTS,
+  //     "User already exists",
+  //   );
+  // }
+  // insert new user into database
+  // const databaseResponse = await pool.query(
+  //   "INSERT INTO users (full_name, email, password) VALUES ($1, $2, $3) RETURNING *",
+  //   [name, email, hashedPassword],
+  // );
+  // if user created is successful
+  // if (databaseResponse.rows[0]) {
+  //   successResponse(res, 201, null, "User Created Successfully");
+  // }
+  // throw new ApiError();
+  // res.status(201).json({ user: newUser.rows[0] });
+  // } catch (error: any) {
+  //   console.error(error.message);
+  //   // res.status(500).json({ error: "Server error" });
+  //   errorResponse(
+  //     res,
+  //     500,
+  //     SystemErrorCodes.INTERNAL_SERVER_ERROR,
+  //     "Internal Server Error",
+  //   );
+  // }
 };
 
 export const loginUser = async (
@@ -97,7 +97,8 @@ export const loginUser = async (
       );
     }
     // compare passwords
-    const isMatch = await bcrypt.compare(password, user.password);
+    // const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await compare(password, user.password);
 
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid password" });
