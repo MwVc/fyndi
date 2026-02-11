@@ -11,7 +11,10 @@ export const errorMiddleware = (
 ) => {
   // handle internal ApiError
   if (err instanceof ApiError) {
-    console.log("The error is instance of ApiError");
+    console.log(
+      "This is from error middleware",
+      "The error is instance of ApiError",
+    );
     // log internally
     if (!err.expose) {
       console.error({
@@ -27,7 +30,7 @@ export const errorMiddleware = (
     }
   }
 
-  console.log(err); // debugging
+  console.log("This is from error middleware", err); // debugging
 
   return errorResponse(
     // fallback error for non ApiError
