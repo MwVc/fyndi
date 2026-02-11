@@ -14,6 +14,16 @@ const insert = async ({
   return rows[0];
 };
 
-export const models = {
+const getByEmail = async (email: string) => {
+  // check if user exists
+  const { rows } = await pool.query("SELECT * FROM users WHERE email = $1", [
+    email,
+  ]);
+
+  return rows[0];
+};
+
+export const userModels = {
   insert,
+  getByEmail,
 };
