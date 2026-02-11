@@ -1,26 +1,15 @@
 import { signAccessToken, signRefreshToken } from "../auth/token.auth.js";
-import { successResponse, errorResponse } from "../utilities/response.js";
+import { successResponse } from "../utilities/response.js";
 
 //importing types
 import type { NextFunction, Request, Response } from "express";
-import { ValidationErrorCodes } from "../errors/code.errors.js";
-import { users } from "../services/users.services.js";
-
-// hash function
-import { compare } from "bcrypt";
-
-import pool from "../db/pgPool.db.js";
+import { userServices } from "../services/users.services.js";
 
 interface RegisterUserData {
   firstName: string;
   lastName: string;
   email: string;
   password?: string;
-}
-
-interface LoginUserData {
-  email: string;
-  password: string;
 }
 
 export const registerUser = async (
@@ -30,121 +19,52 @@ export const registerUser = async (
 ) => {
   try {
     const data = req.body as RegisterUserData;
-    const user = await users.create(data);
+    const user = await userServices.create(data);
 
-    if (user) {
-      successResponse(res, 201, user, "user created successfully");
-    }
+    successResponse(res, 201, user, "user created successfully");
   } catch (error) {
     next(error);
   }
-
-  // try {
-  //--------REDUNDANT---------
-  // check if user exists
-  // const existingUser = await pool.query(
-  //   "SELECT * FROM users WHERE email = $1",
-  //   [email],
-  // );
-  // if (existingUser.rows.length > 0) {
-  //   return errorResponse(
-  //     res,
-  //     400,
-  //     UserErrorCodes.ALREADY_EXISTS,
-  //     "User already exists",
-  //   );
-  // }
-  // insert new user into database
-  // const databaseResponse = await pool.query(
-  //   "INSERT INTO users (full_name, email, password) VALUES ($1, $2, $3) RETURNING *",
-  //   [name, email, hashedPassword],
-  // );
-  // if user created is successful
-  // if (databaseResponse.rows[0]) {
-  //   successResponse(res, 201, null, "User Created Successfully");
-  // }
-  // throw new ApiError();
-  // res.status(201).json({ user: newUser.rows[0] });
-  // } catch (error: any) {
-  //   console.error(error.message);
-  //   // res.status(500).json({ error: "Server error" });
-  //   errorResponse(
-  //     res,
-  //     500,
-  //     SystemErrorCodes.INTERNAL_SERVER_ERROR,
-  //     "Internal Server Error",
-  //   );
-  // }
 };
 
-export const loginUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const loginUser = async (req: Request, res: Response) => {
   // destructure email and password from req.body
-  const { email, password }: LoginUserData = req.body;
+  const { email, password }: { email: string; password: string } = req.body;
   console.log(email, password);
 
-  try {
-    // check if user exists
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
+  const userData = await userServices.login(email, password);
+  console.log(userData);
 
-    const user = result.rows[0];
+  // // generate JWT
+  // const payload = { id: user.id, role: user.role };
 
-    if (!user) {
-      // return res.status(400).json({ error: "Invalid email" });
-      return errorResponse(
-        res,
-        400,
-        ValidationErrorCodes.INVALID_EMAIL_FORMAT,
-        "Invalid email",
-      );
-    }
-    // compare passwords
-    // const isMatch = await bcrypt.compare(password, user.password);
-    const isMatch = await compare(password, user.password);
+  // // create tokens
+  // const accessToken = signAccessToken(payload);
+  // const refreshToken = signRefreshToken(payload);
+  // const csrfToken = crypto.randomUUID();
+  // console.log(csrfToken);
 
-    if (!isMatch) {
-      return res.status(400).json({ error: "Invalid password" });
-    }
-
-    // generate JWT
-    const payload = { id: user.id, role: user.role };
-
-    // create tokens
-    const accessToken = signAccessToken(payload);
-    const refreshToken = signRefreshToken(payload);
-    const csrfToken = crypto.randomUUID();
-    console.log(csrfToken);
-
-    // send tokens as HTTP-only cookies
-    res
-      .cookie("access_token", accessToken, {
-        httpOnly: true, // client side js can't read
-        secure: true, // htpps
-        sameSite: "none",
-        maxAge: 15 * 60 * 1000,
-      })
-      .cookie("refresh_token", refreshToken, {
-        httpOnly: true, // client side js can't read
-        secure: true, // https
-        sameSite: "none",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      })
-      .cookie("csrf_token", csrfToken, {
-        httpOnly: false, // exposing to client side js
-        sameSite: "none", // cross-site request
-        secure: true,
-      })
-      .status(200)
-      .json({ message: "Logged in" });
-  } catch (error) {
-    next(error);
-    console.error(error);
-  }
+  // send tokens as HTTP-only cookies
+  res
+    .cookie("access_token", userData.accessToken, {
+      httpOnly: true, // client side js can't read
+      secure: true, // htpps
+      sameSite: "none",
+      maxAge: 15 * 60 * 1000,
+    })
+    .cookie("refresh_token", userData.refreshToken, {
+      httpOnly: true, // client side js can't read
+      secure: true, // https
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+    .cookie("csrf_token", userData.csrfToken, {
+      httpOnly: false, // exposing to client side js
+      sameSite: "none", // cross-site request
+      secure: true,
+    })
+    .status(200)
+    .json({ message: "Logged in" });
 };
 
 export const logoutUser = (req: Request, res: Response) => {
