@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import ApiError from "../errors/api.errors.js";
 import { SystemErrorCodes } from "../errors/code.errors.js";
 
-export const hashPassword = async (password: string): Promise<string> => {
+const hashPassword = async (password: string): Promise<string> => {
   // hash password
   const saltRounds = 10;
   try {
@@ -20,7 +20,7 @@ export const hashPassword = async (password: string): Promise<string> => {
   }
 };
 
-export const compare = async (
+const comparePassword = async (
   plainPassword: string,
   hashedPassword: string,
 ): Promise<boolean> => {
@@ -37,4 +37,9 @@ export const compare = async (
       error,
     );
   }
+};
+
+export const authentication = {
+  comparePassword,
+  hashPassword,
 };
