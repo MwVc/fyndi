@@ -3,23 +3,19 @@ import { successResponse, errorResponse } from "../utilities/response.js";
 
 //importing types
 import type { NextFunction, Request, Response } from "express";
-import {
-  SystemErrorCodes,
-  UserErrorCodes,
-  ValidationErrorCodes,
-} from "../errors/code.errors.js";
-import ApiError from "../errors/api.errors.js";
-
-// import { compare } from "bcrypt";
-
-//services
+import { ValidationErrorCodes } from "../errors/code.errors.js";
 import { users } from "../services/users.services.js";
+
+// hash function
+import { compare } from "bcrypt";
+
+import pool from "../db/pgPool.db.js";
 
 interface RegisterUserData {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
+  password?: string;
 }
 
 interface LoginUserData {
@@ -27,11 +23,22 @@ interface LoginUserData {
   password: string;
 }
 
-export const registerUser = async (req: Request, res: Response) => {
-  const data = req.body as RegisterUserData;
+export const registerUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const data = req.body as RegisterUserData;
+    const user = await users.create(data);
 
-  const user = await users.create(data);
-  successResponse(res, 201, user, "user created successfully");
+    if (user) {
+      successResponse(res, 201, user, "user created successfully");
+    }
+  } catch (error) {
+    next(error);
+  }
+
   // try {
   //--------REDUNDANT---------
   // check if user exists
