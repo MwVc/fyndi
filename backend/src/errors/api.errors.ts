@@ -10,7 +10,7 @@ class ApiError extends Error {
     statusCode: number,
     errorCode: ErrorCode,
     message: string,
-    expose: false,
+    expose: boolean,
     details?: unknown,
   ) {
     super(message);
