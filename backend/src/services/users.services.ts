@@ -9,8 +9,7 @@ export interface RegisterUserData {
   firstName: string;
   lastName: string;
   email: string;
-  password?: string;
-  hashedPassword?: string;
+  password: string;
 }
 
 const create = async ({
