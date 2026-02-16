@@ -1,4 +1,3 @@
-import { signAccessToken, signRefreshToken } from "../auth/token.auth.js";
 import { successResponse } from "../utilities/response.js";
 
 //importing types
@@ -27,44 +26,41 @@ export const registerUser = async (
   }
 };
 
-export const loginUser = async (req: Request, res: Response) => {
-  // destructure email and password from req.body
-  const { email, password }: { email: string; password: string } = req.body;
-  console.log(email, password);
+export const loginUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    // destructure email and password from req.body
+    const { email, password }: { email: string; password: string } = req.body;
+    console.log(email, password);
 
-  const userData = await userServices.login(email, password);
-  console.log(userData);
+    const userData = await userServices.login(email, password);
+    console.log(userData);
+    res
+      .cookie("access_token", userData.accessToken, {
+        httpOnly: true, // client side js can't read
+        secure: true, // htpps
+        sameSite: "none",
+        maxAge: 15 * 60 * 1000,
+      })
+      .cookie("refresh_token", userData.refreshToken, {
+        httpOnly: true, // client side js can't read
+        secure: true, // https
+        sameSite: "none",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+      .cookie("csrf_token", userData.csrfToken, {
+        httpOnly: false, // exposing to client side js
+        sameSite: "none", // cross-site request
+        secure: true,
+      });
 
-  // // generate JWT
-  // const payload = { id: user.id, role: user.role };
-
-  // // create tokens
-  // const accessToken = signAccessToken(payload);
-  // const refreshToken = signRefreshToken(payload);
-  // const csrfToken = crypto.randomUUID();
-  // console.log(csrfToken);
-
-  // send tokens as HTTP-only cookies
-  res
-    .cookie("access_token", userData.accessToken, {
-      httpOnly: true, // client side js can't read
-      secure: true, // htpps
-      sameSite: "none",
-      maxAge: 15 * 60 * 1000,
-    })
-    .cookie("refresh_token", userData.refreshToken, {
-      httpOnly: true, // client side js can't read
-      secure: true, // https
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
-    .cookie("csrf_token", userData.csrfToken, {
-      httpOnly: false, // exposing to client side js
-      sameSite: "none", // cross-site request
-      secure: true,
-    })
-    .status(200)
-    .json({ message: "Logged in" });
+    successResponse(res, 200, null, "Logged in");
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const logoutUser = (req: Request, res: Response) => {
@@ -86,7 +82,7 @@ export const logoutUser = (req: Request, res: Response) => {
       httpOnly: false, // exposing to client side js
       sameSite: "none", // cross-site request
       secure: true,
-    })
-    .status(200)
-    .json({ message: "Logged out" });
+    });
+
+  successResponse(res, 200, null, "Logged out");
 };
