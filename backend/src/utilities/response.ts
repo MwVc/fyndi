@@ -12,7 +12,8 @@ export const successResponse = (
     success: true,
     data, // response data
     error: null,
-    message, // optional success message
+    message,
+    meta: { timeStamp: new Date().toISOString() }, // optional success message
   });
 };
 
@@ -33,5 +34,6 @@ export const errorResponse = (
       details,
     },
     message: "", // keep top-level message empty for errors
+    meta: { timeStamp: new Date().toISOString() },
   });
 };
