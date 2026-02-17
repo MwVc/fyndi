@@ -5,28 +5,37 @@ import { UserErrorCodes } from "../errors/code.errors.js";
 import { ValidationErrorCodes } from "../errors/code.errors.js";
 import { signAccessToken, signRefreshToken } from "../auth/token.auth.js";
 
-export interface RegisterUserData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
+// export interface RegisterUserData {
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   password: string;
+// }
 
 const create = async ({
   firstName,
   lastName,
   email,
   password,
-}: RegisterUserData) => {
+}: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}) => {
+  // sanitize email input
+  const sanitizedEmail = email.trim().toLocaleLowerCase();
+
+  // hash password
   const hashedPassword = await authentication.hashPassword(password);
-  console.log(hashedPassword);
+  // console.log(hashedPassword);
 
   // utilise try/catch to catch user exists error
   try {
     const user = await userModels.insert({
       firstName,
       lastName,
-      email,
+      email: sanitizedEmail,
       hashedPassword,
     });
 
@@ -46,13 +55,17 @@ const create = async ({
 };
 
 const login = async (email: string, password: string) => {
+  // sanitize emailinput
+  const sanitizedEmail = email.trim().toLocaleLowerCase();
+
   // get user from database
-  const user = await userModels.getByEmail(email);
-  console.log(user);
+  const user = await userModels.getByEmail(sanitizedEmail);
+  // console.log("users/services:", email, password, user);
+
   if (!user) {
     throw new ApiError(
       400,
-      ValidationErrorCodes.INVALID_EMAIL_FORMAT,
+      ValidationErrorCodes.INVALID_CREDENTIALS,
       "Invalid Email",
       true,
     );
@@ -64,7 +77,7 @@ const login = async (email: string, password: string) => {
   if (!isMatch) {
     throw new ApiError(
       400,
-      ValidationErrorCodes.INVALID_PASSWORD_FORMAT,
+      ValidationErrorCodes.INVALID_CREDENTIALS,
       "Invalid password",
       true,
     );
@@ -77,7 +90,7 @@ const login = async (email: string, password: string) => {
   const accessToken = signAccessToken(payload);
   const refreshToken = signRefreshToken(payload);
   const csrfToken = crypto.randomUUID();
-  console.log(csrfToken);
+  // console.log(csrfToken);
 
   return { user, accessToken, refreshToken, csrfToken };
 };
