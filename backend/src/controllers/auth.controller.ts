@@ -8,7 +8,7 @@ interface RegisterUserData {
   firstName: string;
   lastName: string;
   email: string;
-  password?: string;
+  password: string;
 }
 
 export const registerUser = async (
@@ -20,7 +20,8 @@ export const registerUser = async (
     const data = req.body as RegisterUserData;
     const user = await userServices.create(data);
 
-    successResponse(res, 201, user, "user created successfully");
+    // don't send user data to frontend upon creation
+    successResponse(res, 201, null, "user created successfully");
   } catch (error) {
     next(error);
   }
@@ -34,10 +35,10 @@ export const loginUser = async (
   try {
     // destructure email and password from req.body
     const { email, password }: { email: string; password: string } = req.body;
-    console.log(email, password);
+    // console.log("login func/controller:", email, password);
 
     const userData = await userServices.login(email, password);
-    console.log(userData);
+    // console.log(userData);
     res
       .cookie("access_token", userData.accessToken, {
         httpOnly: true, // client side js can't read
