@@ -36,7 +36,7 @@ const create = async ({
       firstName,
       lastName,
       email: sanitizedEmail,
-      hashedPassword,
+      password: hashedPassword,
     });
 
     return user;
