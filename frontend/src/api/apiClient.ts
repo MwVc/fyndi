@@ -20,10 +20,11 @@ apiClient.interceptors.response.use(
 
   // Error handler
   (error) => {
+    console.log(error);
     // Normalize error into ApiReslt type
     const normalizedError: ApiResult<null> = {
       success: false,
-      message: error.response?.data?.message || "Request failed",
+      message: error.response?.data?.error?.message || "Request failed",
       data: null,
       error: {
         code: error.response?.data?.error?.code || "UNKNOWN_ERROR",
@@ -34,7 +35,7 @@ apiClient.interceptors.response.use(
           "Something went wrong",
       },
     };
-    Promise.reject(normalizedError);
+    return normalizedError;
   },
 );
 export default apiClient;
