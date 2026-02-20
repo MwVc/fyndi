@@ -1,28 +1,24 @@
 import apiClient from "./apiClient";
+import type { ApiResult } from "./types";
 
-export const onLogin = async (email: string, password: string) => {
-  try {
-    const axiosResponse = await apiClient.post("/auth/login", {
-      email: email,
-      password: password,
-    });
+export const onLogin = async (
+  email: string,
+  password: string,
+): Promise<ApiResult<null>> => {
+  const result: ApiResult<null> = await apiClient.post("/auth/login", {
+    email: email,
+    password: password,
+  });
 
-    console.log(axiosResponse);
-  } catch (error) {
-    console.log(error);
+  if (!result.success) {
+    console.log(result);
   }
+
+  return result;
 };
 
-export const onLogout = async () => {
-  try {
-    const response = await fetch("https://localhost:5050/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    return response;
+export const onLogout = async (): Promise<ApiResult<null>> => {
+  const result: ApiResult<null> = await apiClient.post("auth/logout");
 
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
+  return result;
 };
