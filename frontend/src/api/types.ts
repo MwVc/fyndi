@@ -1,6 +1,6 @@
 "T: some data type that we dont know yet";
 export type ApiSuccess<T> = {
-  ok: true;
+  success: true;
   message: string;
   data: T;
   error: null;
@@ -15,8 +15,9 @@ export type ApiError = {
   message: string; // error message
   data: null;
   error: {
-    details?: string; // optional HTTP status code
-    code?: string; // optional app-specific error code
+    details: string; // optional HTTP status code
+    code: string; // optional app-specific error code
+    message: string;
   };
 };
 
