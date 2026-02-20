@@ -7,7 +7,9 @@ const Navbar = () => {
 
   const logout = async () => {
     const response = await onLogout();
-    if (response) {
+
+    console.log(response);
+    if (response.success) {
       setIsLoggedin(false);
       console.log(response);
     }
