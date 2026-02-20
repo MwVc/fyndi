@@ -13,22 +13,15 @@ const Login = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
+    const response = await onLogin(email, password);
 
-    try {
-      const response = await onLogin(email, password);
-      if (response?.ok) {
-        setIsLoggedin(true);
-        (document.getElementById("login_modal") as HTMLDialogElement)?.close();
-        setError(null);
-      } else {
-        setError("Invalid email or password");
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
-      setError("Unknown error");
-    } finally {
+    if (response?.success) {
+      setIsLoading(false);
+      setIsLoggedin(true);
+      (document.getElementById("login_modal") as HTMLDialogElement)?.close();
+      setError(null);
+    } else if (!response.success) {
+      setError(response.message);
       setIsLoading(false);
     }
   };
