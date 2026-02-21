@@ -66,7 +66,7 @@ const login = async (email: string, password: string) => {
     throw new ApiError(
       400,
       ValidationErrorCodes.INVALID_CREDENTIALS,
-      "Invalid Email",
+      "Invalid Credentials",
       true,
     );
   }
@@ -78,7 +78,7 @@ const login = async (email: string, password: string) => {
     throw new ApiError(
       400,
       ValidationErrorCodes.INVALID_CREDENTIALS,
-      "Invalid password",
+      "Invalid Credentials",
       true,
     );
   }
