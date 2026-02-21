@@ -4,10 +4,12 @@ import cors from "./config/cors.js";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.routes.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
+import { limiter } from "./middleware/rate_limit.middleware.js";
 
 const app = express();
 
 // middleware
+app.use(limiter);
 app.use(express.json());
 app.use(cors);
 app.use(cookieParser());
