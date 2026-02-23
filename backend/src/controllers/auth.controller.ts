@@ -40,17 +40,17 @@ export const loginUser = async (
     const userData = await userServices.login(email, password);
     // console.log(userData);
     res
-      .cookie("access_token", userData.accessToken, {
+      .cookie("access_token", userData.accessToken.token, {
         httpOnly: true, // client side js can't read
         secure: true, // htpps
         sameSite: "none",
-        maxAge: 15 * 60 * 1000,
+        maxAge: userData.accessToken.maxAge, // time in milliseconds
       })
-      .cookie("refresh_token", userData.refreshToken, {
+      .cookie("refresh_token", userData.refreshToken.token, {
         httpOnly: true, // client side js can't read
         secure: true, // https
         sameSite: "none",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: userData.refreshToken.maxAge, // time in milliseconds
       })
       .cookie("csrf_token", userData.csrfToken, {
         httpOnly: false, // exposing to client side js
