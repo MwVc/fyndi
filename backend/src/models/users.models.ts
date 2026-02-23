@@ -1,5 +1,6 @@
 // import type { RegisterUserData } from "../services/users.services.js";
 import pool from "../db/pgPool.db.js";
+import type { User } from "./user.js";
 
 const insert = async ({
   firstName,
@@ -19,7 +20,7 @@ const insert = async ({
   return rows[0];
 };
 
-const getByEmail = async (email: string) => {
+const getByEmail = async (email: string): Promise<User> => {
   const { rows } = await pool.query("SELECT * FROM users WHERE email = $1", [
     email,
   ]);
