@@ -30,6 +30,7 @@ export const PermissionErrorCodes = {
   ALREADY_EXISTS: "RESOURCE_ALREADY_EXISTS",
   CONFLICT: "RESOURCE_CONFLICT",
   STATE_INVALID: "RESOURCE_STATE_INVALID",
+  TOO_MANY_REQUESTS: "TOO_MANY_REQUESTS",
 } as const;
 
 export const SystemErrorCodes = {
