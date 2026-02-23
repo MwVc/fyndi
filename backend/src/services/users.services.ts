@@ -4,6 +4,7 @@ import ApiError from "../errors/api.errors.js";
 import { UserErrorCodes } from "../errors/code.errors.js";
 import { ValidationErrorCodes } from "../errors/code.errors.js";
 import { signAccessToken, signRefreshToken } from "../auth/token.auth.js";
+import { refreshTokenModels } from "../models/refreshToken.models.js";
 
 // export interface RegisterUserData {
 //   firstName: string;
@@ -91,6 +92,9 @@ const login = async (email: string, password: string) => {
   const refreshToken = signRefreshToken(payload);
   const csrfToken = crypto.randomUUID();
   // console.log(csrfToken);
+
+  //on successfull login store refreshToken to the database
+  refreshTokenModels.insert(refreshToken, user.id);
 
   return { user, accessToken, refreshToken, csrfToken };
 };
