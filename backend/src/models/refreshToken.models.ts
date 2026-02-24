@@ -9,15 +9,15 @@ interface tokenData {
 
 const insert = async (refreshToken: tokenData, userId: string) => {
   const { rows } = await pool.query(
-    "INSERT INTO refresh_tokens (user_id, token, expires_at, created_at, revoked) VALUES ($1, $2, $3, $4, $5) RETURNIN *",
+    "INSERT INTO refresh_tokens (user_id, token, expires_at, created_at) VALUES ($1, $2, $3, $4) RETURNING *",
     [
       userId,
       refreshToken.token,
       refreshToken.expiresAt,
       refreshToken.createdAt,
-      false,
     ],
   );
+  return rows;
 };
 
 export const refreshTokenModels = {
