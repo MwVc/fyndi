@@ -41,5 +41,6 @@ CREATE TABLE IF NOT EXISTS refresh_tokens(
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     token TEXT NOT NULL,
     expires_at BIGINT NOT NULL,
-    created_at BIGINT NOT NULL
+    created_at BIGINT NOT NULL,
+    CONSTRAINT unique_user_token UNIQUE(user_id)
 )
