@@ -94,7 +94,16 @@ const login = async (email: string, password: string) => {
   // console.log(csrfToken);
 
   //on successfull login store refreshToken to the database
-  refreshTokenModels.insert(refreshToken, user.id);
+  const inserTokenResponse = await refreshTokenModels.insert(
+    refreshToken,
+    user.id,
+  );
+
+  console.log("Service layer at line 102");
+
+  if (!inserTokenResponse) {
+    throw new Error("Failed to store refresh token");
+  }
 
   return { user, accessToken, refreshToken, csrfToken };
 };
