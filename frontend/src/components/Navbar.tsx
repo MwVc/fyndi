@@ -58,7 +58,7 @@ const Navbar = () => {
                   </li>{" "}
                 </>
               ) : (
-                <li>
+                <li className="flex flex-row justify-center">
                   <a
                     onClick={() => {
                       (
@@ -69,6 +69,19 @@ const Navbar = () => {
                     }}
                   >
                     Log In
+                  </a>
+                  |
+                  <a
+                    onClick={() => {
+                      console.log("register button clicked");
+                      (
+                        document.getElementById(
+                          "register_modal",
+                        ) as HTMLDialogElement
+                      )?.showModal();
+                    }}
+                  >
+                    Register
                   </a>
                 </li>
               )}
