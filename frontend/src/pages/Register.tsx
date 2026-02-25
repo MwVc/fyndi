@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { registerUser } from "../api/auth";
 
 const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -8,11 +9,24 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isPasswordMatch, setIsPasswordMatch] = useState(true);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     setIsLoading(true);
-    e.preventDefault();
-    console.log(email, firstName, lastName, password);
+    event.preventDefault();
+    const response = await registerUser({
+      firstName,
+      lastName,
+      email,
+      password,
+    });
+
+    setIsLoading(false);
+
+    if (!response.success) {
+      setError(response.message);
+      return;
+    }
 
     // clear form after submission
     setFirstName("");
@@ -21,7 +35,6 @@ const Register = () => {
     setPassword("");
     setConfirmPassword("");
     setIsPasswordMatch(true);
-    setIsLoading(false);
   };
 
   return (
@@ -39,7 +52,7 @@ const Register = () => {
             placeholder="First Name"
             className="input input-bordered w-full"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(event) => setFirstName(event.target.value)}
           />
           <input
             type="text"
@@ -47,7 +60,7 @@ const Register = () => {
             placeholder="Last Name"
             className="input input-bordered w-full"
             value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(event) => setLastName(event.target.value)}
           />
           <input
             type="email"
@@ -55,7 +68,7 @@ const Register = () => {
             placeholder="Email"
             className="input input-bordered w-full"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(event) => setEmail(event.target.value)}
           />
           <input
             type="password"
@@ -63,7 +76,7 @@ const Register = () => {
             placeholder="Password"
             className="input input-bordered w-full"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(event) => setPassword(event.target.value)}
           />
           <input
             type="password"
@@ -71,11 +84,12 @@ const Register = () => {
             placeholder="Confirm Password"
             className={`input ${isPasswordMatch ? "input-bordered" : "input-error"} w-full`}
             value={confirmPassword}
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-              setIsPasswordMatch(e.target.value === password);
+            onChange={(event) => {
+              setConfirmPassword(event.target.value);
+              setIsPasswordMatch(event.target.value === password);
             }}
           />
+          {error && <p className="text-error text-sm">{error}</p>}
           <button
             type="submit"
             className="btn btn-primary w-full"
