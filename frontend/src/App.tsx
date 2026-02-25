@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Layout from "./pages/Layout";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const App = () => {
   useEffect(
@@ -12,6 +13,7 @@ const App = () => {
     <>
       <Layout />
       <Login />
+      <Register />
     </>
   );
 };
