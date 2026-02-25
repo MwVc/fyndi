@@ -9,13 +9,16 @@ import { limiter } from "./middleware/rate_limit.middleware.js";
 const app = express();
 
 // middleware
-app.use(limiter);
-app.use(express.json());
+
 app.use(cors);
-app.use(cookieParser());
+app.use(express.json());
+
+app.use(limiter);
+app.use(cookieParser()); // parse incoming cookies and populate req.cookies
 
 // routes
 app.get("/", (req: Request, res: Response) => {
+  console.log(req.cookies);
   res.send("API is runnning");
 });
 
