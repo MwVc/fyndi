@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { onLogin } from "../api/auth";
+import { hitServer, onLogin } from "../api/auth";
 import { UserContext } from "../context/UserProvider";
 
 const Login = () => {
@@ -26,6 +26,12 @@ const Login = () => {
     }
   };
 
+  const facebookLogin = async () => {
+    console.log("facebook function called");
+    const response = await hitServer();
+    console.log(response);
+  };
+
   return (
     <dialog className="modal" id="login_modal">
       <div className="modal-box flex flex-col px-15 py-10 gap-4 justify-center items-center">
@@ -33,6 +39,7 @@ const Login = () => {
         <form
           onSubmit={handleSubmit}
           className="flex flex-col w-full p-5 gap-4 "
+          method="post"
         >
           <input
             type="email"
@@ -92,7 +99,10 @@ const Login = () => {
             Login with Google
           </button>
           {/* login with facebook */}
-          <button className="btn bg-[#1A77F2] text-white border-[#005fd8]">
+          <button
+            className="btn bg-[#1A77F2] text-white border-[#005fd8]"
+            onClick={facebookLogin}
+          >
             <svg
               aria-label="Facebook logo"
               width="16"
