@@ -15,15 +15,21 @@ const Login = () => {
     setIsLoading(true);
     const response = await onLogin(email, password);
 
-    if (response?.success) {
-      setIsLoading(false);
-      setIsLoggedin(true);
-      (document.getElementById("login_modal") as HTMLDialogElement)?.close();
-      setError(null);
-    } else if (!response.success) {
+    setIsLoading(false);
+
+    if (!response.success) {
       setError(response.message);
-      setIsLoading(false);
+
+      return;
     }
+
+    setIsLoggedin(true);
+    (document.getElementById("login_modal") as HTMLDialogElement)?.close();
+    setError(null);
+
+    // clear form data
+    setEmail("");
+    setPassword("");
   };
 
   const facebookLogin = async () => {
