@@ -43,12 +43,7 @@ const create = async ({
     return user;
   } catch (error: any) {
     if (error.code === "23505") {
-      throw new ApiError(
-        400,
-        UserErrorCodes.EMAIL_EXISTS,
-        "email exists",
-        true,
-      );
+      throw new ApiError(400, UserErrorCodes.USER_EXISTS, "User Exists", true);
     }
 
     throw error;
@@ -93,13 +88,11 @@ const login = async (email: string, password: string) => {
   const csrfToken = crypto.randomUUID();
   // console.log(csrfToken);
 
-  //on successfull login store refreshToken to the database
+  // on successfull login store refreshToken to the database
   const inserTokenResponse = await refreshTokenModels.insert(
     refreshToken,
     user.id,
   );
-
-  console.log("Service layer at line 102");
 
   if (!inserTokenResponse) {
     throw new Error("Failed to store refresh token");
