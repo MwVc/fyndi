@@ -1,18 +1,24 @@
 import type { Request, NextFunction, Response } from "express";
+import { errorResponse } from "../utilities/response.js";
+import { AuthErrorCodes } from "../errors/code.errors.js";
 
-export const csrfProtection = (
+export const verifyCsrfToken = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
+  // console.log("csrf middleware log:", req.headers);
   const csrfCookie: string = req.cookies.csrf_token;
-  const csrfHeader = "empty string";
+  const csrfHeader = req.header("X-CSRF-TOKEN");
 
   if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
-    return res.status(403).json({ error: "CSRF detected" });
+    return errorResponse(
+      res,
+      403,
+      AuthErrorCodes.CSRF_TOKEN_INVALID,
+      "Forbidden",
+    );
   }
 
   next();
 };
-
-// module.exports = { csrfProtection };
