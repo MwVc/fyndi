@@ -12,10 +12,10 @@ const corsOptions: cors.CorsOptions = {
       callback(null, true);
     } else {
       callback(new Error("Blocked by CORS"));
-      console.log("Blocking a request");
+      console.log("Blocked a request from an unallowed origin");
     }
   },
-  credentials: true,
+  credentials: true, // permit frontend to send and receice cookies/auth headers for the allowed origins
 };
 
 export default cors(corsOptions);
