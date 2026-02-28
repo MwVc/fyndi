@@ -12,7 +12,6 @@ export type RefreshToken = {
   id: string;
   userId: string;
   token: string;
-  expiresAt: string;
-  createdAt: string;
-  revoked: boolean;
+  expiresAt: number;
+  createdAt: number;
 };
