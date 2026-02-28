@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.routes.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import { limiter } from "./middleware/rate_limit.middleware.js";
+import { verifyCsrfToken } from "./middleware/csrf.middleware.js";
+import { verifyAccessToken } from "./middleware/verify_access_token.middleware.js";
 
 const app = express();
 
@@ -17,10 +19,14 @@ app.use(limiter);
 app.use(cookieParser()); // parse incoming cookies and populate req.cookies
 
 // routes
-app.get("/", (req: Request, res: Response) => {
-  console.log(req.cookies);
-  res.send("API is runnning");
-});
+app.get(
+  "/",
+  verifyAccessToken,
+  verifyCsrfToken,
+  (req: Request, res: Response) => {
+    res.send("API is runnning");
+  },
+);
 
 // authRouter middleware
 app.use("/auth", authRouter);
