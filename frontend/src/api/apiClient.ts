@@ -1,11 +1,13 @@
 import axios from "axios";
 import type { ApiResult } from "./types";
+import { cookies } from "../utilities/cookies";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",
+    "X-CSRF-TOKEN": cookies.get("csrf_token"),
   },
   withCredentials: true, // allow cookies / auth headers to be sent
 });
@@ -20,7 +22,7 @@ apiClient.interceptors.response.use(
 
   // Error handler
   (error) => {
-    console.log(error);
+    console.log("From API client frontend", error);
     // Normalize error into ApiReslt type
     const normalizedError: ApiResult<null> = {
       success: false,
