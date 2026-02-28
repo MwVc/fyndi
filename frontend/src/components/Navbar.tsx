@@ -1,6 +1,7 @@
 import { useContext } from "react";
-import { onLogout } from "../api/auth";
+import { hitServer, onLogout } from "../api/auth";
 import { UserContext } from "../context/UserProvider";
+import { cookies } from "../utilities/cookies";
 
 const Navbar = () => {
   const { isLoggedin, setIsLoggedin } = useContext(UserContext);
@@ -13,6 +14,11 @@ const Navbar = () => {
       setIsLoggedin(false);
       console.log(response);
     }
+  };
+
+  const profile = async () => {
+    console.log(cookies.get("csrf_token"));
+    await hitServer();
   };
   return (
     <div className="navbar bg-base-100 shadow-sm">
@@ -48,7 +54,9 @@ const Navbar = () => {
               {isLoggedin ? (
                 <>
                   <li>
-                    <a className="justify-between">Profile</a>
+                    <a className="justify-between" onClick={() => profile()}>
+                      Profile
+                    </a>
                   </li>
                   <li>
                     <a>Settings</a>
