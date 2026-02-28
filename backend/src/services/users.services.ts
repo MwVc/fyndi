@@ -1,9 +1,15 @@
 import { userModels } from "../models/users.models.js";
-import { authentication } from "../auth/hash.auth.js";
+import {
+  hashPassword,
+  comparePassword,
+} from "../utilities/security/password/password.js";
 import ApiError from "../errors/api.errors.js";
 import { UserErrorCodes } from "../errors/code.errors.js";
 import { ValidationErrorCodes } from "../errors/code.errors.js";
-import { signAccessToken, signRefreshToken } from "../auth/token.auth.js";
+import {
+  signAccessToken,
+  signRefreshToken,
+} from "../utilities/security/jwt/jwt_token.js";
 import { refreshTokenModels } from "../models/refreshToken.models.js";
 
 // export interface RegisterUserData {
@@ -28,7 +34,7 @@ const create = async ({
   const sanitizedEmail = email.trim().toLocaleLowerCase();
 
   // hash password
-  const hashedPassword = await authentication.hashPassword(password);
+  const hashedPassword = await hashPassword(password);
   // console.log(hashedPassword);
 
   // utilise try/catch to catch user exists error
@@ -68,7 +74,7 @@ const login = async (email: string, password: string) => {
   }
 
   // validate password
-  const isMatch = await authentication.comparePassword(password, user.password);
+  const isMatch = await comparePassword(password, user.password);
 
   if (!isMatch) {
     throw new ApiError(
