@@ -11,11 +11,7 @@ interface RegisterUserData {
   password: string;
 }
 
-export const registerUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const registerUser = async (req: Request, res: Response) => {
   const data = req.body as RegisterUserData;
 
   await userServices.create(data); // awaiting service and db layer
@@ -24,11 +20,7 @@ export const registerUser = async (
   successResponse(res, 201, null, "user created successfully");
 };
 
-export const loginUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const loginUser = async (req: Request, res: Response) => {
   // destructure email and password from req.body
   const { email, password }: { email: string; password: string } = req.body;
   // console.log("login func/controller:", email, password);
