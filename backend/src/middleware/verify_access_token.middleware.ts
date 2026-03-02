@@ -32,7 +32,7 @@ export const verifyAccessToken = (
     next();
   } catch (error) {
     console.log(error);
-    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unathorized");
+    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
   }
 
   // destructure cookies to get the tokens
