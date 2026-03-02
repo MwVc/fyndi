@@ -7,9 +7,19 @@ const apiClient = axios.create({
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",
-    "X-CSRF-TOKEN": cookies.get("csrf_token"),
+    // "X-CSRF-TOKEN": cookies.get("csrf_token"),
   },
   withCredentials: true, // allow cookies / auth headers to be sent
+});
+
+apiClient.interceptors.request.use((config) => {
+  const csrfToken = cookies.get("csrf_token");
+
+  if (csrfToken) {
+    config.headers["X-CSRF-TOKEN"] = csrfToken;
+  }
+
+  return config;
 });
 
 // INTERCEPTOR intercepts every response before it reaches the calling code
