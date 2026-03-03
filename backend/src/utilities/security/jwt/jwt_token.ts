@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 
 // types
 export interface JwtPayload {
-  id: string;
-  role: "user" | "admin";
+  userId: string;
+  email: string;
 }
 
 export const signAccessToken = (payload: JwtPayload) => {
