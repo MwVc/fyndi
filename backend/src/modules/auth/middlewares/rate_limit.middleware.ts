@@ -1,9 +1,9 @@
 import rateLimit from "express-rate-limit";
-import ApiError from "../../../errors/api.errors.js";
+import ApiError from "../../../infrastructure/errors/api.errors.js";
 import {
   PermissionErrorCodes,
   UserErrorCodes,
-} from "../../../errors/code.errors.js";
+} from "../../../infrastructure/errors/code.errors.js";
 
 export const limiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes

@@ -1,4 +1,4 @@
-import pool from "../db/pgPool.db.js";
+import pool from "../../infrastructure/db/pgPool.db.js";
 
 interface tokenData {
   token: string;

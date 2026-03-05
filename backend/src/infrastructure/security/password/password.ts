@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import ApiError from "../../../errors/api.errors.js";
-import { SystemErrorCodes } from "../../../errors/code.errors.js";
+import ApiError from "../../errors/api.errors.js";
+import { SystemErrorCodes } from "../../errors/code.errors.js";
 
 export const hashPassword = async (password: string): Promise<string> => {
   // hash password

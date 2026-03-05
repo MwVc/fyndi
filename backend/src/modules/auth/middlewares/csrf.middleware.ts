@@ -1,6 +1,6 @@
 import type { Request, NextFunction, Response } from "express";
-import { errorResponse } from "../../../utilities/response.js";
-import { AuthErrorCodes } from "../../../errors/code.errors.js";
+import { errorResponse } from "../../../infrastructure/http/response.js";
+import { AuthErrorCodes } from "../../../infrastructure/errors/code.errors.js";
 
 export const verifyCsrfToken = (
   req: Request,

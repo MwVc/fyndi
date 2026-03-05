@@ -1,4 +1,4 @@
-import { successResponse } from "../../utilities/response.js";
+import { successResponse } from "../../infrastructure/http/response.js";
 
 //importing types
 import type { NextFunction, Request, Response } from "express";

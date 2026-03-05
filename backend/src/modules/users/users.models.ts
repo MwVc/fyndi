@@ -1,6 +1,6 @@
 // import type { RegisterUserData } from "../services/users.services.js";
-import pool from "../db/pgPool.db.js";
-import type { User } from "./user.js";
+import pool from "../../infrastructure/db/pgPool.db.js";
+import type { User } from "./types.js";
 
 const insert = async ({
   firstName,

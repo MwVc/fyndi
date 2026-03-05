@@ -1,6 +1,6 @@
 import express from "express";
 import type { Request, Response } from "express";
-import cors from "./config/cors.js";
+import cors from "./infrastructure/config/cors.js";
 import cookieParser from "cookie-parser";
 import authRouter from "./modules/auth/auth.routes.js";
 import { errorMiddleware } from "./infrastructure/middlewares/error.middleware.js";
