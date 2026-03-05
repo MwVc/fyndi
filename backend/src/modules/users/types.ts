@@ -7,11 +7,3 @@ export type User = {
   role: "user" | "admin";
   createdAt: Date;
 };
-
-export type RefreshToken = {
-  id: string;
-  userId: string;
-  token: string;
-  expiresAt: number;
-  createdAt: number;
-};
