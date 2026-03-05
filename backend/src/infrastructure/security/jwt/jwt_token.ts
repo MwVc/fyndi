@@ -1,12 +1,13 @@
 import jwt from "jsonwebtoken";
+import type { UserClaim } from "../../../modules/auth/auth.claims.js";
 
 // types
 export interface JwtPayload {
   userId: string;
-  email: string;
+  userRole: string;
 }
 
-export const signAccessToken = (payload: JwtPayload) => {
+export const signAccessToken = (payload: UserClaim) => {
   if (!process.env.JWT_ACCESS_SECRET) {
     throw new Error("JWT_SECRET mising");
   }
@@ -20,7 +21,7 @@ export const signAccessToken = (payload: JwtPayload) => {
   };
 };
 
-export const signRefreshToken = (payload: JwtPayload) => {
+export const signRefreshToken = (payload: UserClaim) => {
   if (!process.env.JWT_REFRESH_SECRET) {
     throw new Error("JWT_SECRET mising");
   }
