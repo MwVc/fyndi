@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
-import { errorResponse } from "../utilities/response.js";
-import { AuthErrorCodes } from "../errors/code.errors.js";
+import { errorResponse } from "../../../infrastructure/http/response.js";
+import { AuthErrorCodes } from "../../../infrastructure/errors/code.errors.js";
 import jwt from "jsonwebtoken";
-import ApiError from "../errors/api.errors.js";
+import ApiError from "../../../infrastructure/errors/api.errors.js";
 
 export const verifyAccessToken = (
   req: Request,
