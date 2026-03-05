@@ -11,6 +11,7 @@ import {
   signRefreshToken,
 } from "../../infrastructure/security/jwt/jwt_token.js";
 import { refreshTokenModels } from "./refreshToken.models.js";
+import { claims } from "./auth.claims.js";
 
 const create = async ({
   firstName,
@@ -77,12 +78,13 @@ const login = async (email: string, password: string) => {
     );
   }
 
-  // generate JWT
-  const payload = { userId: user.id, email: user.email };
+  // create userPayload
+  const userClaim = claims.createClaims(user);
+  // const payload = { userId: user.id, email: user.email };
 
   // create tokens
-  const accessToken = signAccessToken(payload);
-  const refreshToken = signRefreshToken(payload);
+  const accessToken = signAccessToken(userClaim);
+  const refreshToken = signRefreshToken(userClaim);
   const csrfToken = crypto.randomUUID();
 
   // on successfull login store refreshToken to the database
@@ -104,7 +106,7 @@ const login = async (email: string, password: string) => {
 //   const accessToken = signAccessToken;
 // };
 
-export const userServices = {
+export const authServices = {
   create,
   login,
   // refresh,
