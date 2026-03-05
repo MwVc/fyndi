@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import { errorResponse } from "../utilities/response.js";
-import { AuthErrorCodes } from "../errors/code.errors.js";
-import ApiError from "../errors/api.errors.js";
+import { errorResponse } from "../../../infrastructure/http/response.js";
+import { AuthErrorCodes } from "../../../infrastructure/errors/code.errors.js";
+import ApiError from "../../../infrastructure/errors/api.errors.js";
 import jwt from "jsonwebtoken";
 
 export const verifyRefreshToken = (
@@ -25,17 +25,17 @@ export const verifyRefreshToken = (
     );
   }
 
-  try {
-    const payload = jwt.verify(refresh_token, process.env.JWT_REFRESH_SECRET);
+  // try {
+  //   const payload = jwt.verify(refresh_token, process.env.JWT_REFRESH_SECRET);
 
-    // pass in the user object to cotroller
-    req.user = {
-      userId: payload.userId,
-    };
-    next();
-    console.log("\nLog from refreshToken middleware, verify jwt:\n", user);
-  } catch (error) {
-    console.log(error);
-    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
-  }
+  //   // pass in the user object to cotroller
+  //   req.user = {
+  //     userId: payload.userId,
+  //   };
+  //   next();
+  //   console.log("\nLog from refreshToken middleware, verify jwt:\n", user);
+  // } catch (error) {
+  //   console.log(error);
+  //   return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
+  // }
 };
