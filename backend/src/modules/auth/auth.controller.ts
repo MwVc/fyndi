@@ -2,7 +2,7 @@ import { successResponse } from "../../infrastructure/http/response.js";
 
 //importing types
 import type { NextFunction, Request, Response } from "express";
-import { userServices } from "./auth.service.js";
+import { authServices } from "./auth.service.js";
 
 interface RegisterUserData {
   firstName: string;
@@ -14,7 +14,7 @@ interface RegisterUserData {
 export const registerUser = async (req: Request, res: Response) => {
   const data = req.body as RegisterUserData;
 
-  await userServices.create(data); // awaiting service and db layer
+  await authServices.create(data); // awaiting service and db layer
 
   // don't send user data to frontend upon creation
   successResponse(res, 201, null, "user created successfully");
@@ -25,7 +25,7 @@ export const loginUser = async (req: Request, res: Response) => {
   const { email, password }: { email: string; password: string } = req.body;
   // console.log("login func/controller:", email, password);
 
-  const userData = await userServices.login(email, password);
+  const userData = await authServices.login(email, password);
   // console.log(userData);
   res
     .cookie("access_token", userData.accessToken.token, {
