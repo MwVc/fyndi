@@ -12,18 +12,14 @@ import {
 } from "../../infrastructure/security/jwt/jwt_token.js";
 import { refreshTokenModels } from "./refreshToken.models.js";
 import { claims } from "./auth.claims.js";
+import type { LoginUserInput, RegisterUserInput } from "./auth.types.js";
 
 const create = async ({
   firstName,
   lastName,
   email,
   password,
-}: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}) => {
+}: RegisterUserInput) => {
   // sanitize email input
   const sanitizedEmail = email.trim().toLocaleLowerCase();
 
@@ -49,9 +45,9 @@ const create = async ({
   }
 };
 
-const login = async (email: string, password: string) => {
+const login = async (userCredentials: LoginUserInput) => {
   // sanitize emailinput
-  const sanitizedEmail = email.trim().toLocaleLowerCase();
+  const sanitizedEmail = userCredentials.email.trim().toLocaleLowerCase();
 
   // get user from database
   const user = await userModels.getByEmail(sanitizedEmail);
@@ -67,7 +63,10 @@ const login = async (email: string, password: string) => {
   }
 
   // validate password
-  const isMatch = await comparePassword(password, user.password);
+  const isMatch = await comparePassword(
+    userCredentials.password,
+    user.password,
+  );
 
   if (!isMatch) {
     throw new ApiError(
@@ -78,9 +77,8 @@ const login = async (email: string, password: string) => {
     );
   }
 
-  // create userPayload
+  // create user claim
   const userClaim = claims.createClaims(user);
-  // const payload = { userId: user.id, email: user.email };
 
   // create tokens
   const accessToken = signAccessToken(userClaim);
