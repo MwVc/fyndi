@@ -2,6 +2,7 @@
 
 // import type definitions
 import "express-serve-static-core";
+import type { UserClaim } from "../../modules/auth/auth.claims.ts";
 
 // Module augmentation: extend the existing Express Request interface
 declare module "express-serve-static-core" {
@@ -9,5 +10,6 @@ declare module "express-serve-static-core" {
     // Cookies added by cookie-parser middleware
     cookies: Record<string, string>;
     // signedCookies: Record<string, string>;
+    user?: UserClaim;
   }
 }
