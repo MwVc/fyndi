@@ -3,16 +3,10 @@ import { successResponse } from "../../infrastructure/http/response.js";
 //importing types
 import type { NextFunction, Request, Response } from "express";
 import { authServices } from "./auth.service.js";
-
-interface RegisterUserData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}
+import type { LoginUserInput, RegisterUserInput } from "./auth.types.js";
 
 export const registerUser = async (req: Request, res: Response) => {
-  const data = req.body as RegisterUserData;
+  const data = req.body as RegisterUserInput;
 
   await authServices.create(data); // awaiting service and db layer
 
@@ -22,10 +16,10 @@ export const registerUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
   // destructure email and password from req.body
-  const { email, password }: { email: string; password: string } = req.body;
-  // console.log("login func/controller:", email, password);
+  const userCredentials = req.body as LoginUserInput;
+  // console.log("login func/controller:", req.body);
 
-  const userData = await authServices.login(email, password);
+  const userData = await authServices.login(userCredentials);
   // console.log(userData);
   res
     .cookie("access_token", userData.accessToken.token, {
@@ -49,10 +43,9 @@ export const loginUser = async (req: Request, res: Response) => {
   successResponse(res, 200, null, "Logged in");
 };
 
-// export const refreshUser = (req: Request, res: Response) => {
-//   const user = req.user;
-//   userServices.refresh();
-// };
+export const refreshUser = (req: Request, res: Response) => {
+  const user = req.user;
+};
 
 export const logoutUser = (req: Request, res: Response) => {
   // clear all cookies
