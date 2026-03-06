@@ -3,8 +3,9 @@ import { errorResponse } from "../../../infrastructure/http/response.js";
 import { AuthErrorCodes } from "../../../infrastructure/errors/code.errors.js";
 import jwt from "jsonwebtoken";
 import ApiError from "../../../infrastructure/errors/api.errors.js";
+import { verifyAccessToken } from "../../../infrastructure/security/jwt/jwt_token.js";
 
-export const verifyAccessToken = (
+export const accessTokenMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -27,7 +28,8 @@ export const verifyAccessToken = (
   }
 
   try {
-    const user = jwt.verify(access_token, process.env.JWT_ACCESS_SECRET);
+    // const user = jwt.verify(access_token, process.env.JWT_ACCESS_SECRET);
+    const userClaim = verifyAccessToken(access_token);
 
     next();
     return;
