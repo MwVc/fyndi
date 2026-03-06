@@ -1,17 +1,14 @@
 import jwt from "jsonwebtoken";
 import type { UserClaim } from "../../../modules/auth/auth.claims.js";
 
-// types
-export interface JwtPayload {
-  userId: string;
-  userRole: string;
-}
+const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
+const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
 export const signAccessToken = (payload: UserClaim) => {
-  if (!process.env.JWT_ACCESS_SECRET) {
+  if (!ACCESS_SECRET) {
     throw new Error("JWT_SECRET mising");
   }
-  const token = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
+  const token = jwt.sign(payload, ACCESS_SECRET, {
     expiresIn: "15m",
   });
 
@@ -22,11 +19,11 @@ export const signAccessToken = (payload: UserClaim) => {
 };
 
 export const signRefreshToken = (payload: UserClaim) => {
-  if (!process.env.JWT_REFRESH_SECRET) {
+  if (!REFRESH_SECRET) {
     throw new Error("JWT_SECRET mising");
   }
 
-  const token = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
+  const token = jwt.sign(payload, REFRESH_SECRET, {
     expiresIn: "7d",
   });
   const createdAt = Date.now(); // milliseconds
@@ -39,4 +36,19 @@ export const signRefreshToken = (payload: UserClaim) => {
     maxAge: maxAge, // 7days in milliseconds
     expiresAt: expiresAt,
   };
+};
+
+export const verifyRefreshToken = (token: string): UserClaim => {
+  if (!REFRESH_SECRET) {
+    throw new Error("JWT_SECRET missing");
+  }
+  return jwt.verify(token, REFRESH_SECRET) as UserClaim;
+};
+
+export const verifyAccessToken = (token: string) => {
+  if (!ACCESS_SECRET) {
+    throw new Error("JWT_SECRET missing");
+  }
+
+  return jwt.verify(token, ACCESS_SECRET) as UserClaim;
 };
