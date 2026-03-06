@@ -2,9 +2,9 @@ import type { NextFunction, Request, Response } from "express";
 import { errorResponse } from "../../../infrastructure/http/response.js";
 import { AuthErrorCodes } from "../../../infrastructure/errors/code.errors.js";
 import ApiError from "../../../infrastructure/errors/api.errors.js";
-import jwt from "jsonwebtoken";
+import { verifyRefreshToken } from "../../../infrastructure/security/jwt/jwt_token.js";
 
-export const verifyRefreshToken = (
+export const refreshTokenMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -25,17 +25,15 @@ export const verifyRefreshToken = (
     );
   }
 
-  // try {
-  //   const payload = jwt.verify(refresh_token, process.env.JWT_REFRESH_SECRET);
+  try {
+    const userClaim = verifyRefreshToken(refresh_token);
 
-  //   // pass in the user object to cotroller
-  //   req.user = {
-  //     userId: payload.userId,
-  //   };
-  //   next();
-  //   console.log("\nLog from refreshToken middleware, verify jwt:\n", user);
-  // } catch (error) {
-  //   console.log(error);
-  //   return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
-  // }
+    // pass in the user object to cotroller
+    req.user = userClaim;
+    next();
+    console.log("\nLog from refreshToken middleware, verify jwt:\n", userClaim);
+  } catch (error) {
+    console.log(error);
+    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
+  }
 };
