@@ -6,7 +6,7 @@ import authRouter from "./modules/auth/auth.routes.js";
 import { errorMiddleware } from "./infrastructure/middlewares/error.middleware.js";
 import { limiter } from "./modules/auth/middlewares/rate_limit.middleware.js";
 import { verifyCsrfToken } from "./modules/auth/middlewares/csrf.middleware.js";
-import { verifyAccessToken } from "./modules/auth/middlewares/verify_access_token.middleware.js";
+import { accessTokenMiddleware } from "./modules/auth/middlewares/verify_access_token.middleware.js";
 
 const app = express();
 
@@ -20,10 +20,10 @@ app.use(cookieParser()); // parse incoming cookies and populate req.cookies
 // routes
 app.get(
   "/",
-  verifyAccessToken,
+  accessTokenMiddleware,
   verifyCsrfToken,
   (req: Request, res: Response) => {
-    res.send("API is runnning");
+    res.send("Root hit successful");
   },
 );
 
