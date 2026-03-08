@@ -16,7 +16,8 @@ export type ApiError = {
   data: null;
   error: {
     details: string; // optional HTTP status code
-    code: string; // optional app-specific error code
+    errorCode: string; // optional app-specific error code
+    statusCode: number;
     message: string;
   };
 };
