@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { ApiResult } from "./types";
 import { cookies } from "../utilities/cookies";
+import { refreshLogin } from "./auth";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -14,6 +15,7 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use((config) => {
   const csrfToken = cookies.get("csrf_token");
+  console.log("From API client:", config);
 
   if (csrfToken) {
     config.headers["X-CSRF-TOKEN"] = csrfToken;
@@ -31,15 +33,27 @@ apiClient.interceptors.response.use(
   },
 
   // Error handler
-  (error) => {
+  async (error) => {
     console.log("From API client frontend", error);
+    if (error.response?.status === 401 && !error.config.retry) {
+      console.log("this is from apiClient and am calling refresh endpoint");
+      console.log(error.config.retry);
+
+      const newConfig = error.config;
+      newConfig.retry = true;
+      await refreshLogin();
+
+      return apiClient(newConfig);
+    }
+
     // Normalize error into ApiReslt type
     const normalizedError: ApiResult<null> = {
       success: false,
       message: error.response?.data?.error?.message || "Request failed",
       data: null,
       error: {
-        code: error.response?.data?.error?.code || "UNKNOWN_ERROR",
+        errorCode: error.response?.data?.error?.code || "UNKNOWN_ERROR",
+        statusCode: error.response?.status,
         details: error.response?.data?.error?.details,
         message:
           error.response?.data?.error?.message ||
