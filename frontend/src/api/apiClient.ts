@@ -24,6 +24,9 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
 // INTERCEPTOR intercepts every response before it reaches the calling code
 apiClient.interceptors.response.use(
   //
@@ -34,18 +37,18 @@ apiClient.interceptors.response.use(
 
   // Error handler
   async (error) => {
-    console.log("From API client frontend", error);
-    if (error.response?.status === 401 && !error.config.retry) {
-      console.log("this is from apiClient and am calling refresh endpoint");
-      console.log(error.config.retry);
+    const originalRequest = error.config;
 
-      const newConfig = error.config;
-      newConfig.retry = true;
-      await refreshLogin();
-
-      return apiClient(newConfig);
+    // prevent refresh loop
+    if (originalRequest.url === "/auth/refresh") {
+      return Promise.reject(error);
     }
 
+    if (error.response?.status === 401 && !originalRequest.retry) {
+      if (isRefreshing) {
+        // queue request while refresh runs
+      }
+    }
     // Normalize error into ApiReslt type
     const normalizedError: ApiResult<null> = {
       success: false,
