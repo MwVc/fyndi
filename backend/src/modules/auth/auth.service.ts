@@ -11,7 +11,7 @@ import {
   signRefreshToken,
 } from "../../infrastructure/security/jwt/jwt_token.js";
 import { refreshTokenModels } from "./refreshToken.models.js";
-import { claims } from "./auth.claims.js";
+import { claims, type UserClaim } from "./auth.claims.js";
 import type { LoginUserInput, RegisterUserInput } from "./auth.types.js";
 
 const create = async ({
@@ -81,9 +81,8 @@ const login = async (userCredentials: LoginUserInput) => {
   const userClaim = claims.createClaims(user);
 
   // create tokens
-  const accessToken = signAccessToken(userClaim);
-  const refreshToken = signRefreshToken(userClaim);
-  const csrfToken = crypto.randomUUID();
+  const { accessToken, refreshToken, csrfToken } =
+    generateUserTokens(userClaim);
 
   // on successfull login store refreshToken to the database
   const inserTokenResponse = await refreshTokenModels.insert(
@@ -98,14 +97,35 @@ const login = async (userCredentials: LoginUserInput) => {
   return { user, accessToken, refreshToken, csrfToken };
 };
 
-// const refresh = ({ id, email }) => {
-//   // get user by id from db
-//   // create tokens
-//   const accessToken = signAccessToken;
-// };
+const refresh = async (userClaim: UserClaim) => {
+  // get user by id from db
+  // create tokens
+  console.log("Log from auth.service\n", userClaim);
+  const { accessToken, refreshToken, csrfToken } =
+    generateUserTokens(userClaim);
+
+  const inserTokenResponse = await refreshTokenModels.insert(
+    refreshToken,
+    userClaim.userId,
+  );
+
+  if (!inserTokenResponse) {
+    throw new Error("Failed to store refresh token");
+  }
+
+  return { accessToken, refreshToken, csrfToken };
+};
+
+const generateUserTokens = (userClaim: UserClaim) => {
+  const accessToken = signAccessToken(userClaim);
+  const refreshToken = signRefreshToken(userClaim);
+  const csrfToken = crypto.randomUUID();
+
+  return { accessToken, refreshToken, csrfToken };
+};
 
 export const authServices = {
   create,
   login,
-  // refresh,
+  refresh,
 };
