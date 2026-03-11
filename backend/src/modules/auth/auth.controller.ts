@@ -4,6 +4,7 @@ import { successResponse } from "../../infrastructure/http/response.js";
 import type { NextFunction, Request, Response } from "express";
 import { authServices } from "./auth.service.js";
 import type { LoginUserInput, RegisterUserInput } from "./auth.types.js";
+import type { UserClaim } from "./auth.claims.js";
 
 export const registerUser = async (req: Request, res: Response) => {
   const data = req.body as RegisterUserInput;
@@ -43,8 +44,34 @@ export const loginUser = async (req: Request, res: Response) => {
   successResponse(res, 200, null, "Logged in");
 };
 
-export const refreshUser = (req: Request, res: Response) => {
-  const user = req.user;
+export const refreshUser = async (req: Request, res: Response) => {
+  const user = req.user as UserClaim;
+  // if (!user) {
+  //   throw new ApiError();
+  // }
+  console.log("Log from refreshUser in auth controller:", user);
+  const tokens = await authServices.refresh(user);
+
+  res
+    .cookie("access_token", tokens.accessToken.token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: tokens.accessToken.maxAge,
+    })
+    .cookie("refresh_token", tokens.refreshToken.token, {
+      httpOnly: true, // client side js can't read
+      secure: true, // https
+      sameSite: "none",
+      maxAge: tokens.refreshToken.maxAge, // time in milliseconds
+    })
+    .cookie("csrf_token", tokens.csrfToken, {
+      httpOnly: false, // exposing to client side js
+      sameSite: "none", // cross-site request
+      secure: true,
+    });
+
+  successResponse(res, 200, null, "Refresh successful");
 };
 
 export const logoutUser = (req: Request, res: Response) => {
