@@ -25,7 +25,7 @@ export const registerUser = async ({
   return response;
 };
 
-export const onLogin = async (
+export const loginUser = async (
   email: string,
   password: string,
 ): Promise<ApiResult<null>> => {
@@ -47,7 +47,7 @@ export const refreshLogin = async (): Promise<ApiResult<null>> => {
   return response;
 };
 
-export const onLogout = async (): Promise<ApiResult<null>> => {
+export const logoutUser = async (): Promise<ApiResult<null>> => {
   const result: ApiResult<null> = await apiClient.post("auth/logout");
 
   return result;
