@@ -17,7 +17,6 @@ const insert = async (refreshToken: tokenData, userId: string) => {
       refreshToken.createdAt,
     ],
   );
-  console.log(rows[0]);
   return rows[0];
 };
 
