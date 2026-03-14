@@ -15,7 +15,7 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use((config) => {
   const csrfToken = cookies.get("csrf_token");
-  console.log("From API client:", config);
+  // console.log("From API client:", config);
 
   if (csrfToken) {
     config.headers["X-CSRF-TOKEN"] = csrfToken;
@@ -24,47 +24,69 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-let isRefreshing = false;
-let failedQueue: any[] = [];
-
-// INTERCEPTOR intercepts every response before it reaches the calling code
+// intercept every response
 apiClient.interceptors.response.use(
   //
   (response) => {
-    console.log(response);
+    console.log(response.data);
     return response.data;
   },
 
   // Error handler
   async (error) => {
-    const originalRequest = error.config;
-
-    // prevent refresh loop
-    if (originalRequest.url === "/auth/refresh") {
-      return Promise.reject(error);
+    if (
+      error.response?.status === 401 &&
+      !(error.config.url === "/auth/refresh")
+    ) {
+      return retry(error);
     }
 
-    if (error.response?.status === 401 && !originalRequest.retry) {
-      if (isRefreshing) {
-        // queue request while refresh runs
-      }
-    }
-    // Normalize error into ApiReslt type
-    const normalizedError: ApiResult<null> = {
-      success: false,
-      message: error.response?.data?.error?.message || "Request failed",
-      data: null,
-      error: {
-        errorCode: error.response?.data?.error?.code || "UNKNOWN_ERROR",
-        statusCode: error.response?.status,
-        details: error.response?.data?.error?.details,
-        message:
-          error.response?.data?.error?.message ||
-          error.message ||
-          "Something went wrong",
-      },
-    };
-    return normalizedError;
+    return normalizeError(error);
   },
 );
+
+// retry error 401
+const retry = async (error: any) => {
+  const originalRequest = error.config;
+  console.log(originalRequest._retry);
+
+  if (originalRequest._retry) {
+    return normalizeError(error);
+  }
+
+  originalRequest._retry = true;
+
+  const response = await refreshLogin();
+
+  console.log("retry function:\nResponse.success:", response.success);
+
+  if (!response.success) {
+    return normalizeError(error);
+    // logout user
+  }
+
+  // retry queued requests
+
+  return apiClient(originalRequest);
+};
+
+const normalizeError = (error: any) => {
+  // Normalize error into ApiReslt type
+  const normalizedError: ApiResult<null> = {
+    success: false,
+    message: error.response?.data?.error?.message || "Request failed",
+    data: null,
+    error: {
+      errorCode: error.response?.data?.error?.code || "UNKNOWN_ERROR",
+      statusCode: error.response?.status,
+      details: error.response?.data?.error?.details,
+      message:
+        error.response?.data?.error?.message ||
+        error.message ||
+        "Something went wrong",
+    },
+  };
+  return normalizedError;
+};
+
 export default apiClient;
