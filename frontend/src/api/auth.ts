@@ -1,4 +1,4 @@
-import apiClient from "./apiClient";
+import apiClient from "./axios/apiClient";
 import type { ApiResult } from "./types";
 
 interface userData {
@@ -53,6 +53,6 @@ export const logoutUser = async (): Promise<ApiResult<null>> => {
   return result;
 };
 
-export const hitServer = async () => {
+export const hitServer = async (): Promise<ApiResult<null>> => {
   return await apiClient.get("/");
 };
