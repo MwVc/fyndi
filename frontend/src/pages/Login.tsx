@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { hitServer, onLogin } from "../api/auth";
+import { hitServer, loginUser } from "../api/auth";
 import { UserContext } from "../context/UserProvider";
 
 const Login = () => {
@@ -13,7 +13,7 @@ const Login = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
-    const response = await onLogin(email, password);
+    const response = await loginUser(email, password);
 
     setIsLoading(false);
 
