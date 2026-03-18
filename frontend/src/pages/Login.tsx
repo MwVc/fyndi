@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { hitServer, loginUser } from "../api/auth";
+import { loginUser } from "../api/auth";
 import { UserContext } from "../context/UserProvider";
 
 const Login = () => {
@@ -30,12 +30,6 @@ const Login = () => {
     // clear form data
     setEmail("");
     setPassword("");
-  };
-
-  const facebookLogin = async () => {
-    console.log("facebook function called");
-    const response = await hitServer();
-    console.log(response);
   };
 
   return (
@@ -105,10 +99,7 @@ const Login = () => {
             Login with Google
           </button>
           {/* login with facebook */}
-          <button
-            className="btn bg-[#1A77F2] text-white border-[#005fd8]"
-            onClick={facebookLogin}
-          >
+          <button className="btn bg-[#1A77F2] text-white border-[#005fd8]">
             <svg
               aria-label="Facebook logo"
               width="16"
