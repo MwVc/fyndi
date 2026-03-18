@@ -10,9 +10,7 @@ export const accessTokenMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  // console.log("Log from verifyAccessToken middleware", req.cookies);
   const { access_token } = req.cookies;
-  // console.log("Log from verifyAccessToken middleware", access_token);
 
   if (!access_token) {
     return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
@@ -28,7 +26,6 @@ export const accessTokenMiddleware = (
   }
 
   try {
-    // const user = jwt.verify(access_token, process.env.JWT_ACCESS_SECRET);
     const userClaim = verifyAccessToken(access_token);
 
     next();
