@@ -10,7 +10,7 @@ const pool = new Pool({
 });
 
 pool.on("connect", () => {
-  console.log("Connected to Posgresql");
+  console.log("pgPool.ts: Connected to Posgresql\n");
 });
 
 export default pool;
