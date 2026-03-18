@@ -2,21 +2,22 @@ import { normalizeError } from "./normalize_error_response";
 import { refreshLogin } from "../auth";
 import apiClient from "./apiClient";
 
-let isRefreshing: boolean = true;
+let isRefreshing: boolean = false;
 let retryQueue: any[] = [];
 
 export const retryRequest = async (error: any) => {
-  if (isRefreshing) {
-    retryQueue.push(error.config);
-    return;
-  }
-
   const originalRequest = error.config;
+  console.log("Retry request is fired");
+  if (isRefreshing) {
+    console.log(retryQueue);
+
+    return new Promise((resolve, reject) => {
+      retryQueue.push({ originalRequest, resolve, reject });
+    });
+  }
+  isRefreshing = true;
 
   const refreshToken = async () => {
-    isRefreshing = true;
-    console.log(originalRequest._retry);
-
     if (originalRequest._retry) {
       return normalizeError(error);
     }
@@ -30,18 +31,24 @@ export const retryRequest = async (error: any) => {
 
   const response = await refreshToken();
 
-  console.log("retry function\nResponse.success:", response.success);
+  console.log("retry function. Response.success:", response.success);
 
   if (!response.success) {
+    retryQueue.forEach(({ reject }) => reject(normalizeError(originalRequest)));
+    retryQueue = [];
+    isRefreshing = false;
     return normalizeError(error);
     // logout user
   }
 
-  apiClient(originalRequest);
-
   if (retryQueue.length > 0) {
-    retryQueue.forEach((config) => apiClient(config));
+    retryQueue.forEach(({ resolve, originalRequest }) =>
+      resolve(apiClient(originalRequest)),
+    );
+
+    retryQueue = [];
   }
   isRefreshing = false;
-  return;
+
+  return apiClient(originalRequest);
 };
