@@ -7,6 +7,7 @@ import { errorMiddleware } from "./infrastructure/middlewares/error.middleware.j
 import { limiter } from "./modules/auth/middlewares/rate_limit.middleware.js";
 import { verifyCsrfToken } from "./modules/auth/middlewares/csrf.middleware.js";
 import { accessTokenMiddleware } from "./modules/auth/middlewares/verify_access_token.middleware.js";
+import { successResponse } from "./infrastructure/http/response.js";
 
 const app = express();
 
@@ -20,10 +21,16 @@ app.use(cookieParser()); // parse incoming cookies and populate req.cookies
 // routes
 app.get(
   "/",
-  accessTokenMiddleware,
   verifyCsrfToken,
+  accessTokenMiddleware,
+
   (req: Request, res: Response) => {
-    res.send("Root hit successful");
+    successResponse(
+      res,
+      200,
+      { message: "Root hit successful" },
+      "Successful Response",
+    );
   },
 );
 
