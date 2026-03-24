@@ -1,24 +1,21 @@
 import { useContext } from "react";
-import { hitServer, onLogout } from "../api/auth";
+import { hitServer, logoutUser } from "../api/auth";
 import { UserContext } from "../context/UserProvider";
-import { cookies } from "../utilities/cookies";
 
 const Navbar = () => {
   const { isLoggedin, setIsLoggedin } = useContext(UserContext);
 
   const logout = async () => {
-    const response = await onLogout();
+    const response = await logoutUser();
 
-    console.log(response);
     if (response.success) {
       setIsLoggedin(false);
-      console.log(response);
     }
   };
 
   const profile = async () => {
-    console.log(cookies.get("csrf_token"));
-    await hitServer();
+    const response = await hitServer();
+    console.log("Log from Navbar component:", response);
   };
   return (
     <div className="navbar bg-base-100 shadow-sm">
