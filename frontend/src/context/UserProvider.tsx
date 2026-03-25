@@ -6,7 +6,7 @@ import {
   type SetStateAction,
 } from "react";
 import { createContext } from "react";
-import { subscribeFn } from ".";
+import { subscribeFn } from "./auth.events";
 
 interface UserContextType {
   isLoggedin: boolean;
@@ -28,6 +28,10 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
     subscribeFn((value: boolean) => {
       setIsLoggedin(value);
     });
+
+    const unsubscribe = subscribeFn((value) => setIsLoggedin(value));
+
+    return unsubscribe;
   }, []);
 
   return (
