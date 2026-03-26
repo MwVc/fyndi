@@ -25,12 +25,9 @@ export const UserProvider = ({ children }: PropsWithChildren) => {
   const role = "user";
 
   useEffect(() => {
-    subscribeFn((value: boolean) => {
-      setIsLoggedin(value);
-    });
-
     const unsubscribe = subscribeFn((value) => setIsLoggedin(value));
 
+    // call unsubscribe when components unmounts
     return unsubscribe;
   }, []);
 
