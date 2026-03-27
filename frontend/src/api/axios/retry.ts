@@ -1,6 +1,7 @@
 import { normalizeError } from "./normalize_error_response";
-import { refreshLogin } from "../auth";
+import { logoutUser, refreshLogin } from "../auth";
 import apiClient from "./apiClient";
+import { authContext } from "../../context/auth.events";
 
 let isRefreshing: boolean = false;
 let retryQueue: any[] = [];
@@ -8,6 +9,7 @@ let retryQueue: any[] = [];
 export const retryRequest = async (error: any) => {
   const originalRequest = error.config;
   console.log("Retry request is fired");
+
   if (isRefreshing) {
     console.log(retryQueue);
 
@@ -15,6 +17,7 @@ export const retryRequest = async (error: any) => {
       retryQueue.push({ originalRequest, resolve, reject });
     });
   }
+
   isRefreshing = true;
 
   const refreshToken = async () => {
@@ -37,8 +40,11 @@ export const retryRequest = async (error: any) => {
     retryQueue.forEach(({ reject }) => reject(normalizeError(originalRequest)));
     retryQueue = [];
     isRefreshing = false;
+
+    authContext.notify(false); // logout the user: notify authContext to set state to loggedIn false
+    logoutUser();
+
     return normalizeError(error);
-    // logout user
   }
 
   if (retryQueue.length > 0) {
@@ -48,6 +54,7 @@ export const retryRequest = async (error: any) => {
 
     retryQueue = [];
   }
+
   isRefreshing = false;
 
   return apiClient(originalRequest);
