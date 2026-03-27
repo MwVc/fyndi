@@ -1,20 +1,16 @@
 import { useEffect } from "react";
 import Layout from "./pages/Layout";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import { Routes, Route } from "react-router-dom";
 
 const App = () => {
-  useEffect(
-    () => document.documentElement.setAttribute("data-theme", "light"),
-    [],
-  );
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", "light");
+  }, []);
 
   return (
-    <>
-      <Layout />
-      <Login />
-      <Register />
-    </>
+    <Routes>
+      <Route path="/" element={<Layout />}></Route>
+    </Routes>
   );
 };
 
