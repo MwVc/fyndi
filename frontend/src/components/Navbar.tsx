@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { hitServer, logoutUser } from "../api/auth";
 import { UserContext } from "../context/UserProvider";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const { isLoggedin, setIsLoggedin } = useContext(UserContext);
@@ -17,6 +18,7 @@ const Navbar = () => {
     const response = await hitServer();
     console.log("Log from Navbar component:", response);
   };
+
   return (
     <div className="navbar bg-base-100 shadow-sm">
       {/* Container to center content */}
@@ -64,30 +66,8 @@ const Navbar = () => {
                 </>
               ) : (
                 <li className="flex flex-row justify-center">
-                  <a
-                    onClick={() => {
-                      (
-                        document.getElementById(
-                          "login_modal",
-                        ) as HTMLDialogElement
-                      )?.showModal();
-                    }}
-                  >
-                    Log In
-                  </a>
-                  |
-                  <a
-                    onClick={() => {
-                      console.log("register button clicked");
-                      (
-                        document.getElementById(
-                          "register_modal",
-                        ) as HTMLDialogElement
-                      )?.showModal();
-                    }}
-                  >
-                    Register
-                  </a>
+                  <Link to="/login">Log In</Link>|
+                  <Link to="/register">Register</Link>
                 </li>
               )}
             </ul>
