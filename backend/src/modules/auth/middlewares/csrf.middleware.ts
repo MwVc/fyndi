@@ -9,12 +9,6 @@ export const verifyCsrfToken = (
 ) => {
   const csrfCookie: string = req.cookies.csrf_token;
   const csrfHeader = req.header("X-CSRF-TOKEN");
-  console.log(
-    "\n\nLog from csrf middleware:\n",
-    req.headers,
-    "\ncsrf header: \n",
-    csrfHeader,
-  );
 
   if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
     return errorResponse(

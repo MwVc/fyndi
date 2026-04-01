@@ -9,7 +9,6 @@ export const refreshTokenMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  // console.log("Log from verify refresh token middleware", req.cookies);
   const { refresh_token } = req.cookies;
 
   if (!refresh_token) {
@@ -32,11 +31,9 @@ export const refreshTokenMiddleware = (
 
     const userClaim = { userId, role };
     req.user = userClaim;
-    // console.log("Log from verify refresh token middleware \n", userClaim);
+
     next();
-    // console.log("\nLog from refreshToken middleware, verify jwt:\n", userClaim);
   } catch (error) {
-    // console.log(error);
     return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
   }
 };

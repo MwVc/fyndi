@@ -31,7 +31,6 @@ export const accessTokenMiddleware = (
     next();
     return;
   } catch (error) {
-    console.log(error);
     return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
   }
 };
