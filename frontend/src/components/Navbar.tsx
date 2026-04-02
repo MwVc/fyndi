@@ -19,8 +19,21 @@ const Navbar = () => {
     console.log("Log from Navbar component:", response);
   };
 
+  const categories = [
+    "Plumbing",
+    "Electrical",
+    "Carpentry",
+    "Masonry",
+    "Painting",
+    "Welding",
+    "Mechanic",
+    "Cleaning",
+    "Moving Services",
+    "Electronics",
+  ];
+
   return (
-    <div className="navbar bg-base-100 shadow-sm">
+    <nav className="navbar bg-base-100 shadow-sm top-0 sticky z-50 flex flex-wrap">
       {/* Container to center content */}
       <div className="w-11/12 md:w-7/12 mx-auto flex justify-between items-center">
         {/* Left side: brand */}
@@ -74,7 +87,14 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-    </div>
+
+      {/* buttons to filter jobs */}
+      <div className="flex flex-row justify-between gap-1 p-4 sticky overflow-auto mx-auto">
+        {categories.map((category) => (
+          <button className="btn btn-outline">{category}</button>
+        ))}
+      </div>
+    </nav>
   );
 };
 
