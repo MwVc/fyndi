@@ -1,4 +1,10 @@
-const JobCard = () => {
+import { Link } from "react-router-dom";
+
+const JobCard = ({ id }: { id: number }) => {
+  const viewJob = (id: number) => {
+    console.log(`This is job number: ${id}`);
+  };
+
   return (
     <div className="card bg-base-100 shadow-sm">
       <figure>
@@ -14,7 +20,9 @@ const JobCard = () => {
           title and actions parts
         </p>
         <div className="card-actions justify-end">
-          <button className="btn btn-primary">View</button>
+          <button className="btn btn-primary" onClick={() => viewJob(id)}>
+            <Link to={`/job/${id}`}>View</Link>
+          </button>
         </div>
       </div>
     </div>
