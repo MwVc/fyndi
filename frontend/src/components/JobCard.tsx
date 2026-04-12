@@ -20,9 +20,13 @@ const JobCard = ({ id }: { id: number }) => {
           title and actions parts
         </p>
         <div className="card-actions justify-end">
-          <button className="btn btn-primary" onClick={() => viewJob(id)}>
-            <Link to={`/job/${id}`}>View</Link>
-          </button>
+          <Link
+            to={`/job/${id}`}
+            className="btn btn-primary"
+            onClick={() => viewJob(id)}
+          >
+            View
+          </Link>
         </div>
       </div>
     </div>
