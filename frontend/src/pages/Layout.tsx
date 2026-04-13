@@ -1,12 +1,12 @@
 import Navbar from "../components/Navbar";
-import Main from "../components/Main";
+import { Outlet } from "react-router-dom";
 
 const Layout = () => {
   return (
     <>
       <div className="min-h-screen flex flex-col">
         <Navbar />
-        <Main />
+        <Outlet />
       </div>
     </>
   );
