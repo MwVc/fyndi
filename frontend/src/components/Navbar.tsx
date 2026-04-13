@@ -101,7 +101,7 @@ const Navbar = () => {
       </div>
 
       {/* buttons to filter jobs */}
-      <div className="flex flex-row justify-between gap-2 p-4 sticky overflow-auto mx-auto">
+      <div className="w-11/12 md:w-7/12 overflow-auto flex flex-row justify-between gap-2 p-4 sticky">
         {categories.map((category) => (
           <button
             className={`btn btn-sm btn-outline ${category.id === selectedCategoryId && "btn-active"}`}
