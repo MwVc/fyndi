@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { registerUser } from "../api/auth";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -11,6 +12,8 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isPasswordMatch, setIsPasswordMatch] = useState(true);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
     setIsLoading(true);
@@ -28,6 +31,7 @@ const Register = () => {
       setError(response.message);
       return;
     }
+    navigate("/login", { replace: true }); // (replace)prevents the user from pressing back and returning to login
 
     // clear form after submission
     setFirstName("");
