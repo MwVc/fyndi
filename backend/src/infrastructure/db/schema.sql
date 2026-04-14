@@ -1,7 +1,21 @@
-DROP TABLE IF EXISTS providers;
+DROP TABLE IF EXISTS areas CASCADE;
+DROP TABLE IF EXISTS sub_areas;
 DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS services;
+DROP TABLE IF EXISTS clients CASCADE;
+DROP TABLE IF EXISTS jobs;
 DROP TABLE IF EXISTS refresh_tokens;
+
+CREATE TABLE areas (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    slug VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE sub_areas (
+    id SERIAL PRIMARY KEY,
+    area_id INTEGER REFERENCES areas(id) ON DELETE CASCADE,
+    slug VARCHAR(100) UNIQUE NOT NULL
+);
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -13,11 +27,10 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE providers (
+CREATE TABLE clients (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    service_category VARCHAR(100) NOT NULL,
-    description TEXT,
+    job_category VARCHAR(100) NOT NULL,
     location VARCHAR(100),
     phone_number VARCHAR(20),
     availability BOOLEAN DEFAULT true,
@@ -25,7 +38,7 @@ CREATE TABLE providers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS services(
+CREATE TABLE IF NOT EXISTS jobs(
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
