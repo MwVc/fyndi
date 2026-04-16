@@ -13,8 +13,9 @@ CREATE TABLE areas (
 
 CREATE TABLE sub_areas (
     id SERIAL PRIMARY KEY,
-    area_id INTEGER REFERENCES areas(id) ON DELETE CASCADE,
-    slug VARCHAR(100) UNIQUE NOT NULL
+    name VARCHAR(100) NOT NULL,
+    area_id INTEGER REFERENCES areas(id) ON DELETE CASCADE NOT NULL,
+    slug VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE users (
@@ -27,6 +28,7 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 CREATE TABLE clients (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -38,13 +40,18 @@ CREATE TABLE clients (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE categories(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+)
+
 CREATE TABLE IF NOT EXISTS jobs(
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     title TEXT NOT NULL,
-    description TEXT,
-    category TEXT,
-    location TEXT,
+    description TEXT NOT NULL,
+    category_id INTEGER REFERENCES categories(id) NOT NULL,
+    location INTEGER REFERENCES sub_areas(id) NOT NULL,
     phone TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
