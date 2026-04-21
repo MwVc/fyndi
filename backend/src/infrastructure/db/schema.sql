@@ -1,17 +1,18 @@
-DROP TABLE IF EXISTS areas CASCADE;
-DROP TABLE IF EXISTS sub_areas;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS clients CASCADE;
-DROP TABLE IF EXISTS jobs;
+DROP TABLE IF EXISTS experts;
+DROP TABLE IF EXISTS jobs CASCADE;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS expert_categories;
 DROP TABLE IF EXISTS refresh_tokens;
 
-CREATE TABLE areas (
+CREATE TABLE areas IF NOT EXISTS (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     slug VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE sub_areas (
+CREATE TABLE sub_areas IF NOT EXISTS (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     area_id INTEGER REFERENCES areas(id) ON DELETE CASCADE NOT NULL,
@@ -32,7 +33,17 @@ CREATE TABLE users (
 CREATE TABLE clients (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    job_category VARCHAR(100) NOT NULL,
+    location VARCHAR(100),
+    phone_number VARCHAR(20),
+    availability BOOLEAN DEFAULT true,
+    rating NUMERIC(2,1) DEFAULT 0.0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE experts (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    cate VARCHAR(100) NOT NULL,
     location VARCHAR(100),
     phone_number VARCHAR(20),
     availability BOOLEAN DEFAULT true,
@@ -45,18 +56,25 @@ CREATE TABLE categories(
     name VARCHAR(100) NOT NULL,
 )
 
-CREATE TABLE IF NOT EXISTS jobs(
+CREATE TABLE expert_categories (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    expert_id INTEGER REFERENCES experts(id) ON DELETE CASCADE,
+    category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE
+)
+
+CREATE TABLE jobs (
+    id SERIAL PRIMARY KEY,
+    client_id INTEGER REFERENCES clients(id) ON DELETE CASCADE NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     category_id INTEGER REFERENCES categories(id) NOT NULL,
     location INTEGER REFERENCES sub_areas(id) NOT NULL,
-    phone TEXT,
+    budget_min NUMERIC(10),
+    budget_max NUMERIC(10),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS refresh_tokens( 
+CREATE TABLE IF refresh_tokens( 
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     token TEXT NOT NULL,
