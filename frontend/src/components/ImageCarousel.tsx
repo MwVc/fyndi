@@ -5,7 +5,7 @@ const ImageCarousel = ({
 }) => {
   const total = images.length;
   return (
-    <div className="carousel w-full">
+    <div className="carousel w-auto rounded-2xl">
       {images.map((image, index) => {
         const prevIndex = (index - 1 + total) % total;
         const nextIndex = (index + 1) % total;
