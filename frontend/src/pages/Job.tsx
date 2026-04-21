@@ -21,7 +21,7 @@ const Job = () => {
   ];
 
   return (
-    <div className="mx-auto w-full md:w-7/12 border border-red-700">
+    <div className="mx-auto w-full md:w-7/12 p-2 border border-red-700">
       {/* images */}
       <ImageCarousel images={images} />
     </div>
