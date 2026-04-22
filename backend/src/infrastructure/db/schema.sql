@@ -6,13 +6,13 @@ DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS expert_categories;
 DROP TABLE IF EXISTS refresh_tokens;
 
-CREATE TABLE areas IF NOT EXISTS (
+CREATE TABLE areas (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     slug VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE sub_areas IF NOT EXISTS (
+CREATE TABLE sub_areas (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     area_id INTEGER REFERENCES areas(id) ON DELETE CASCADE NOT NULL,
@@ -53,14 +53,14 @@ CREATE TABLE experts (
 
 CREATE TABLE categories(
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-)
+    name VARCHAR(100) NOT NULL
+);
 
 CREATE TABLE expert_categories (
     id SERIAL PRIMARY KEY,
     expert_id INTEGER REFERENCES experts(id) ON DELETE CASCADE,
     category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE
-)
+);
 
 CREATE TABLE jobs (
     id SERIAL PRIMARY KEY,
@@ -74,11 +74,11 @@ CREATE TABLE jobs (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF refresh_tokens( 
+CREATE TABLE refresh_tokens( 
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     token TEXT NOT NULL,
     expires_at BIGINT NOT NULL,
     created_at BIGINT NOT NULL,
     CONSTRAINT unique_user_token UNIQUE(user_id)
-)
+);
