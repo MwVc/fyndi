@@ -1,3 +1,4 @@
+import type { QueryResult } from "pg";
 import pool from "../../infrastructure/db/pgPool.db.js";
 
 interface tokenData {
@@ -20,6 +21,16 @@ const insert = async (refreshToken: tokenData, userId: string) => {
   return rows[0];
 };
 
+const get = async (refresh_token: string, user_id: string) => {
+  const { rows } = await pool.query(
+    "SELECT EXISTS (SELECT 1 FROM refresh_tokens WHERE token = $1 AND user_id = $2)",
+    [refresh_token, user_id],
+  );
+
+  return rows[0].exists;
+};
+
 export const refreshTokenModels = {
   insert,
+  get,
 };
