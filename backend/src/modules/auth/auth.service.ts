@@ -130,6 +130,11 @@ const refresh = async (userClaim: UserClaim, refresh_token: string) => {
   return { accessToken, refreshToken, csrfToken };
 };
 
+const logout = async (refresh_token: string) => {
+  await refreshTokenModels.deleteToken(refresh_token);
+  return;
+};
+
 const generateUserTokens = (userClaim: UserClaim) => {
   const accessToken = signAccessToken(userClaim);
   const refreshToken = signRefreshToken(userClaim);
@@ -142,4 +147,5 @@ export const authServices = {
   create,
   login,
   refresh,
+  logout,
 };
