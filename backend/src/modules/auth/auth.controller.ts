@@ -82,7 +82,12 @@ export const refreshUser = async (req: Request, res: Response) => {
   successResponse(res, 200, null, "Refresh successful");
 };
 
-export const logoutUser = (req: Request, res: Response) => {
+export const logoutUser = async (req: Request, res: Response) => {
+  // destructure token
+  const { refresh_token } = req.cookies;
+
+  await authServices.logout(refresh_token);
+
   // clear all cookies
   res
     .cookie("access_token", "", {
