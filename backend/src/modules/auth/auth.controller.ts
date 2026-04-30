@@ -1,10 +1,12 @@
-import { successResponse } from "../../infrastructure/http/response.js";
-
-//importing types
+import {
+  successResponse,
+  errorResponse,
+} from "../../infrastructure/http/response.js";
 import type { NextFunction, Request, Response } from "express";
 import { authServices } from "./auth.service.js";
 import type { LoginUserInput, RegisterUserInput } from "./auth.types.js";
 import type { UserClaim } from "./auth.claims.js";
+import { AuthErrorCodes } from "../../infrastructure/errors/code.errors.js";
 
 export const registerUser = async (req: Request, res: Response) => {
   const data = req.body as RegisterUserInput;
@@ -46,11 +48,17 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const refreshUser = async (req: Request, res: Response) => {
   const user = req.user as UserClaim;
-  // if (!user) {
-  //   throw new ApiError();
-  // }
   console.log("Log from refreshUser in auth controller:", user);
-  const tokens = await authServices.refresh(user);
+
+  // destructure the token from cookies
+  const { refresh_token } = req.cookies;
+
+  // generates a new refresh token and store it in DB
+  const tokens = await authServices.refresh(user, refresh_token);
+
+  if (!tokens) {
+    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
+  }
 
   res
     .cookie("access_token", tokens.accessToken.token, {
