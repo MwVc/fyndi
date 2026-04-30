@@ -85,7 +85,7 @@ const login = async (userCredentials: LoginUserInput) => {
     generateUserTokens(userClaim);
 
   // on successfull login store refreshToken to the database
-  const inserTokenResponse = await refreshTokenModels.insert(
+  const inserTokenResponse = await refreshTokenModels.insertToken(
     refreshToken,
     user.id,
   );
@@ -99,22 +99,26 @@ const login = async (userCredentials: LoginUserInput) => {
 
 const refresh = async (userClaim: UserClaim, refresh_token: string) => {
   console.log("Log from auth.service\n, User claim:", userClaim);
-  // check if the refresh token exists in db
 
-  const getTokenResponse: boolean = await refreshTokenModels.get(
+  // check if the refresh token exists in db
+  const getTokenResponse: boolean = await refreshTokenModels.getToken(
     refresh_token,
     userClaim.userId,
   );
 
   if (!getTokenResponse) {
     console.log("getTokenResponse is false");
+
+    // delete token
+    const rowCount = await refreshTokenModels.deleteToken(refresh_token);
+
     return null;
   }
 
   const { accessToken, refreshToken, csrfToken } =
     generateUserTokens(userClaim);
 
-  const inserTokenResponse = await refreshTokenModels.insert(
+  const inserTokenResponse = await refreshTokenModels.insertToken(
     refreshToken,
     userClaim.userId,
   );
