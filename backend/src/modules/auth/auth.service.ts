@@ -97,10 +97,20 @@ const login = async (userCredentials: LoginUserInput) => {
   return { user, accessToken, refreshToken, csrfToken };
 };
 
-const refresh = async (userClaim: UserClaim) => {
-  // get user by id from db
-  // create tokens
-  console.log("Log from auth.service\n", userClaim);
+const refresh = async (userClaim: UserClaim, refresh_token: string) => {
+  console.log("Log from auth.service\n, User claim:", userClaim);
+  // check if the refresh token exists in db
+
+  const getTokenResponse: boolean = await refreshTokenModels.get(
+    refresh_token,
+    userClaim.userId,
+  );
+
+  if (!getTokenResponse) {
+    console.log("getTokenResponse is false");
+    return null;
+  }
+
   const { accessToken, refreshToken, csrfToken } =
     generateUserTokens(userClaim);
 
