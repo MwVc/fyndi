@@ -1,7 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { errorResponse } from "../../../infrastructure/http/response.js";
 import { AuthErrorCodes } from "../../../infrastructure/errors/code.errors.js";
-import jwt from "jsonwebtoken";
 import ApiError from "../../../infrastructure/errors/api.errors.js";
 import { verifyAccessToken } from "../../../infrastructure/security/jwt/jwt_token.js";
 
