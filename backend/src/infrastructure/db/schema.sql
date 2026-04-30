@@ -1,9 +1,9 @@
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS clients CASCADE;
-DROP TABLE IF EXISTS experts;
+DROP TABLE IF EXISTS fundis;
 DROP TABLE IF EXISTS jobs CASCADE;
 DROP TABLE IF EXISTS categories;
-DROP TABLE IF EXISTS expert_categories;
+DROP TABLE IF EXISTS fundi_categories;
 DROP TABLE IF EXISTS refresh_tokens;
 
 CREATE TABLE areas (
@@ -40,7 +40,7 @@ CREATE TABLE clients (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE experts (
+CREATE TABLE fundis (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     cate VARCHAR(100) NOT NULL,
@@ -56,9 +56,9 @@ CREATE TABLE categories(
     name VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE expert_categories (
+CREATE TABLE fundi_categories (
     id SERIAL PRIMARY KEY,
-    expert_id INTEGER REFERENCES experts(id) ON DELETE CASCADE,
+    fundi_id INTEGER REFERENCES fundis(id) ON DELETE CASCADE,
     category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE
 );
 
