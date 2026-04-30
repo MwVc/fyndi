@@ -9,6 +9,8 @@ export const refreshTokenMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log("Refresh token middleware hit");
+
   const { refresh_token } = req.cookies;
 
   if (!refresh_token) {
@@ -25,9 +27,8 @@ export const refreshTokenMiddleware = (
   }
 
   try {
+    // verify if the refresh_token is valid
     const { userId, role } = verifyRefreshToken(refresh_token);
-
-    // pass in the user object to controller
 
     const userClaim = { userId, role };
     req.user = userClaim;
