@@ -2,7 +2,7 @@ import {
   successResponse,
   errorResponse,
 } from "../../infrastructure/http/response.js";
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import { authServices } from "./auth.service.js";
 import type { LoginUserInput, RegisterUserInput } from "./auth.types.js";
 import type { UserClaim } from "./auth.claims.js";
