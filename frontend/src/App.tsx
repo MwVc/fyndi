@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import Main from "./components/Main";
 import { refreshLogin } from "./api/auth";
 import Job from "./pages/Job";
+import FundiProfile from "./pages/FundiProfile";
 import { useContext } from "react";
 import { UserContext } from "./context/UserProvider";
 
@@ -34,6 +35,7 @@ const App = () => {
       <Route path="/" element={<Layout />}>
         <Route index element={<Main />}></Route>
         <Route path="job/:id" element={<Job />}></Route>
+        <Route path="/profile" element={<FundiProfile />}></Route>
       </Route>
       <Route path="/login" element={<Login />}></Route>
       <Route path="/register" element={<Register />}></Route>
