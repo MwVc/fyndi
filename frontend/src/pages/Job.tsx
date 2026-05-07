@@ -21,9 +21,12 @@ const Job = () => {
   ];
 
   return (
-    <div className="mx-auto w-full md:w-7/12 p-2 border border-red-700">
+    <div className="mx-auto w-full md:w-7/12 p-2 flex flex-col">
       {/* images */}
       <ImageCarousel images={images} />
+      <div>
+        <h1 className="head">Job Heading</h1>
+      </div>
     </div>
   );
 };
