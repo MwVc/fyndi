@@ -29,16 +29,15 @@ app.get(
       res,
       200,
       { message: "Root hit successful" },
-      "Successful Response",
+      "Successful Response"
     );
-  },
+  }
 );
 
 // authRouter middleware
 app.use("/auth", authRouter);
+// app.use("/user", userRouter);
 
 app.use(errorMiddleware);
-
-console.log("Hello from app.ts");
 
 export default app;
