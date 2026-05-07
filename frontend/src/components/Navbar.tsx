@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { hitServer, logoutUser } from "../api/auth";
 import { UserContext } from "../context/UserProvider";
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const { isLoggedin, setIsLoggedin } = useContext(UserContext);
@@ -29,6 +30,12 @@ const Navbar = () => {
       setSelectedCategoryId(categoryId);
     }
   };
+
+  // categories
+  // logic to conditionally render categories
+  const location = useLocation();
+  const isRootPage = location.pathname === "/";
+
   const categories = [
     { category: "Plumbing", id: 1 },
     { category: "Electrical", id: 2 },
@@ -74,9 +81,13 @@ const Navbar = () => {
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
               >
                 <li>
-                  <a className="justify-between" onClick={() => profile()}>
+                  <Link
+                    to="/profile"
+                    className="justify-between"
+                    onClick={() => profile()}
+                  >
                     Profile
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a>Settings</a>
@@ -101,17 +112,19 @@ const Navbar = () => {
       </div>
 
       {/* buttons to filter jobs */}
-      <div className="w-11/12 md:w-7/12 overflow-auto flex flex-row justify-between gap-2 p-4 sticky">
-        {categories.map((category) => (
-          <button
-            className={`btn btn-sm btn-outline ${category.id === selectedCategoryId && "btn-active"}`}
-            onClick={() => handleCategoryButtonClick(category.id)}
-            key={category.category}
-          >
-            {category.category}
-          </button>
-        ))}
-      </div>
+      {isRootPage && (
+        <div className="w-11/12 md:w-7/12 overflow-auto flex flex-row justify-between gap-2 p-4 sticky">
+          {categories.map((category) => (
+            <button
+              className={`btn btn-sm btn-outline ${category.id === selectedCategoryId && "btn-active"}`}
+              onClick={() => handleCategoryButtonClick(category.id)}
+              key={category.category}
+            >
+              {category.category}
+            </button>
+          ))}
+        </div>
+      )}
     </nav>
   );
 };
