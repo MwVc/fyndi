@@ -1,30 +1,53 @@
+import { useState } from "react";
+
 const ImageCarousel = ({
   images,
 }: {
   images: { url: string; id: number }[];
 }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const total = images.length;
-  return (
-    <div className="carousel w-auto rounded-2xl">
-      {images.map((image, index) => {
-        const prevIndex = (index - 1 + total) % total;
-        const nextIndex = (index + 1) % total;
 
-        return (
-          <div id={`slide${index}`} className="carousel-item relative w-full">
-            <img src={image.url} className="w-full aspect-video" />
-            <div className="heading"></div>
-            <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-              <a href={`#slide${prevIndex}`} className="btn btn-circle">
-                ❮
-              </a>
-              <a href={`#slide${nextIndex}`} className="btn btn-circle">
-                ❯
-              </a>
-            </div>
-          </div>
-        );
-      })}
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + total) % total);
+  };
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % total);
+  };
+
+  return (
+    <div className="relative w-full overflow-hidden rounded-2xl">
+      {/* Slides container */}
+      <div
+        className="flex transition-transform duration-500 ease-in-out"
+        style={{
+          transform: `translateX(-${currentIndex * 100}%)`,
+        }}
+      >
+        {images.map((image) => (
+          <img
+            key={image.id}
+            src={image.url}
+            className="w-full shrink-0 aspect-video object-cover"
+          />
+        ))}
+      </div>
+
+      {/* Navigation buttons */}
+      <button
+        onClick={prevSlide}
+        className="btn btn-circle absolute left-5 top-1/2 -translate-y-1/2"
+      >
+        ❮
+      </button>
+
+      <button
+        onClick={nextSlide}
+        className="btn btn-circle absolute right-5 top-1/2 -translate-y-1/2"
+      >
+        ❯
+      </button>
     </div>
   );
 };
