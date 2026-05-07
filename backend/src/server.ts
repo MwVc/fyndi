@@ -2,7 +2,7 @@ import app from "./app.js";
 import { config } from "dotenv";
 import { readFileSync } from "fs";
 import https from "https";
-import path from "path";
+
 
 config(); // load enviroment variables
 
