@@ -1099,7 +1099,7 @@ const sub_areas = {
 };
 
 const areasSlug = areas.map((area) =>
-  area.toLocaleLowerCase().replace(" ", "_"),
+  area.toLocaleLowerCase().replace(" ", "_")
 );
 
 const seedAreas = async (areas: any) => {
@@ -1121,11 +1121,15 @@ const seedSubAreas = async (data: any) => {
     for (const subArea of data[area]) {
       await pool.query(
         "INSERT INTO sub_areas (name, slug, area_id) VALUES ($1, $2, (SELECT id FROM areas WHERE slug = $3));",
-        [subArea.name, subArea.slug, area],
+        [subArea.name, subArea.slug, area]
       );
     }
   }
 };
 
-await seedAreas(areas);
-seedSubAreas(sub_areas);
+const main = async () => {
+  await seedAreas(areas);
+  seedSubAreas(sub_areas);
+};
+
+main();
