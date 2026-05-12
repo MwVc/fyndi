@@ -13,7 +13,7 @@ import app from "../../app.js";
 
 describe("Root api endpoint", () => {
   it("should return a 200 successful response", async () => {
-    const res = await request(app).get("/");
-    expect(res.statusCode).toBe(200);
+    const response = await request(app).get("/");
+    expect(response.statusCode).toBe(200);
   });
 });
