@@ -5,11 +5,12 @@
   "type": "module",
   "main": "dist/app.js",
   "scripts": {
-    "watch": "tsx watch ./src/server.ts",
+    "watch": "NODE_ENV=dev tsx watch ./src/server.ts",
+    "test": "NODE_ENV=test jest",
     "build": "tsc",
     "start": "nodemon dist/app.js",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "env": "tsx watch ./src/infrastructure/config/env.ts"
   },
   "keywords": [],
   "author": "Victor Mwadime <victormwadime@gmail.com>",
