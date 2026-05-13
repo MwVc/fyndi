@@ -1,9 +1,11 @@
 import * as dotenv from "dotenv";
 
-const envFile = process.env.NODE_ENV === "test" ? ".env.test" : ".env.dev";
+(() => {
+  const envFile = process.env.NODE_ENV === "test" ? ".env.test" : ".env.dev";
 
-console.log(process.env);
+  console.log(`${envFile} variables have been loaded to process`);
 
-dotenv.config({ path: envFile });
+  dotenv.config({ path: envFile });
+})();
 
 // console.log(`Loaded env: ${envFile}`);
