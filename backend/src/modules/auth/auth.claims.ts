@@ -1,11 +1,11 @@
-import { type User } from "../users/types.js";
+import { type DatabaseUser } from "../users/users.types.js";
 
 export interface UserClaim {
   userId: string;
   role: string;
 }
 
-const createClaims = (user: User): UserClaim => {
+const createClaims = (user: DatabaseUser): UserClaim => {
   return { userId: user.id, role: user.role };
 };
 
