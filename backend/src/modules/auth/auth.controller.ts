@@ -11,7 +11,7 @@ import { AuthErrorCodes } from "../../infrastructure/errors/code.errors.js";
 export const registerUser = async (req: Request, res: Response) => {
   const data = req.body as RegisterUserInput;
 
-  await authServices.create(data); // awaiting service and db layer
+  await authServices.register(data); // awaiting service and db layer
 
   // don't send user data to frontend upon creation
   successResponse(res, 201, null, "user created successfully");
