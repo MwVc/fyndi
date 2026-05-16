@@ -13,8 +13,9 @@ import {
 import { refreshTokenModels } from "./refreshToken.models.js";
 import { claims, type UserClaim } from "./auth.claims.js";
 import type { LoginUserInput, RegisterUserInput } from "./auth.types.js";
+import type { DatabaseUser } from "../users/users.types.js";
 
-const create = async ({
+const register = async ({
   firstName,
   lastName,
   email,
@@ -28,7 +29,7 @@ const create = async ({
 
   // utilise try/catch to catch user exists error
   try {
-    const user = await userModels.insert({
+    const user: DatabaseUser = await userModels.insert({
       firstName,
       lastName,
       email: sanitizedEmail,
@@ -58,14 +59,14 @@ const login = async (userCredentials: LoginUserInput) => {
       400,
       ValidationErrorCodes.INVALID_CREDENTIALS,
       "Invalid Credentials",
-      true,
+      true
     );
   }
 
   // validate password
   const isMatch = await comparePassword(
     userCredentials.password,
-    user.password,
+    user.password
   );
 
   if (!isMatch) {
@@ -73,7 +74,7 @@ const login = async (userCredentials: LoginUserInput) => {
       400,
       ValidationErrorCodes.INVALID_CREDENTIALS,
       "Invalid Credentials",
-      true,
+      true
     );
   }
 
@@ -87,7 +88,7 @@ const login = async (userCredentials: LoginUserInput) => {
   // on successfull login store refreshToken to the database
   const inserTokenResponse = await refreshTokenModels.insertToken(
     refreshToken,
-    user.id,
+    user.id
   );
 
   if (!inserTokenResponse) {
@@ -103,7 +104,7 @@ const refresh = async (userClaim: UserClaim, refresh_token: string) => {
   // check if the refresh token exists in db
   const getTokenResponse: boolean = await refreshTokenModels.getToken(
     refresh_token,
-    userClaim.userId,
+    userClaim.userId
   );
 
   if (!getTokenResponse) {
@@ -120,7 +121,7 @@ const refresh = async (userClaim: UserClaim, refresh_token: string) => {
 
   const inserTokenResponse = await refreshTokenModels.insertToken(
     refreshToken,
-    userClaim.userId,
+    userClaim.userId
   );
 
   if (!inserTokenResponse) {
@@ -144,7 +145,7 @@ const generateUserTokens = (userClaim: UserClaim) => {
 };
 
 export const authServices = {
-  create,
+  register,
   login,
   refresh,
   logout,
