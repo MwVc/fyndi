@@ -1,26 +1,21 @@
 // import type { RegisterUserData } from "../services/users.services.js";
 import pool from "../../infrastructure/db/pgPool.db.js";
-import type { User } from "./types.js";
+import type { InsertUserData, DatabaseUser } from "./users.types.js";
 
 const insert = async ({
   firstName,
   lastName,
   email,
   password,
-}: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-}) => {
+}: InsertUserData) => {
   const { rows } = await pool.query(
     "INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *",
-    [firstName, lastName, email, password],
+    [firstName, lastName, email, password]
   );
   return rows[0];
 };
 
-const getByEmail = async (email: string): Promise<User> => {
+const getByEmail = async (email: string): Promise<DatabaseUser> => {
   const { rows } = await pool.query("SELECT * FROM users WHERE email = $1", [
     email,
   ]);
