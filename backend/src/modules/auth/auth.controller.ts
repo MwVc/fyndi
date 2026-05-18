@@ -4,9 +4,14 @@ import {
 } from "../../infrastructure/http/response.js";
 import type { Request, Response } from "express";
 import { authServices } from "./auth.service.js";
-import type { LoginUserInput, RegisterUserInput } from "./auth.types.js";
+import type {
+  LoginUserInput,
+  RegisterUserInput,
+  SafeUser,
+} from "./auth.types.js";
 import type { UserClaim } from "./auth.claims.js";
 import { AuthErrorCodes } from "../../infrastructure/errors/code.errors.js";
+import type { PublicUser } from "../users/users.types.js";
 
 export const registerUser = async (req: Request, res: Response) => {
   const data = req.body as RegisterUserInput;
@@ -24,6 +29,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
   const userData = await authServices.login(userCredentials);
   // console.log(userData);
+
   res
     .cookie("access_token", userData.accessToken.token, {
       httpOnly: true, // client side js can't read protect agains XSS attacks
@@ -43,7 +49,7 @@ export const loginUser = async (req: Request, res: Response) => {
       secure: true,
     });
 
-  successResponse(res, 200, null, "Logged in");
+  successResponse<SafeUser>(res, 200, userData.safeUser, "Logged in");
 };
 
 export const refreshUser = async (req: Request, res: Response) => {
