@@ -11,7 +11,7 @@ export interface LoginUserInput {
 }
 
 export interface SafeUser {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   role: "user" | "admin";
