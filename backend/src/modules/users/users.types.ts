@@ -1,11 +1,11 @@
 export type DatabaseUser = {
   id: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
   role: "user" | "admin";
-  createdAt: Date;
+  created_at: Date;
 };
 
 export interface InsertUserData {
@@ -14,3 +14,11 @@ export interface InsertUserData {
   email: string;
   password: string;
 }
+
+export type PublicUser = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: "user" | "admin";
+};
