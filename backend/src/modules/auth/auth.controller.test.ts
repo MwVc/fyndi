@@ -1,7 +1,6 @@
 import request from "supertest";
-import { authServices } from "./auth.service.js";
 
-// mock middlewares before importing app
+// mock middlewares before importing app preventing routes and middlewares being attached
 // use path to middleware files
 jest.mock("./middlewares/csrf.middleware.ts", () => ({
   verifyCsrfToken: (req: any, res: any, next: any) => next(),
@@ -11,9 +10,11 @@ jest.mock("./middlewares/verify_access_token.middleware.ts", () => ({
   accessTokenMiddleware: (req: any, res: any, next: any) => next(),
 }));
 
+// mock the service layer before app is imported
 jest.mock("./auth.service.js");
 
 import app from "../../app.js";
+import { authServices } from "./auth.service.js"; // authService is already mocked
 
 describe("Root api endpoint", () => {
   it("should return a 200 successful response", async () => {
@@ -38,5 +39,20 @@ describe("registerUser controller", () => {
     // 3. assertions
     expect(response.statusCode).toBe(201);
     expect(response.body.message).toBe("user created successfully");
+  });
+});
+
+describe("loginUser controller", () => {
+  it("Should login a user successfully", async () => {
+    // 1. Mock service
+    (authServices.login as jest.Mock).mockResolvedValue({
+      user: {
+        id: 0,
+        firstName: "Victor",
+        lastName: "Mwadime",
+        email: "victormwadime@gmail.com",
+        role: "admin",
+      },
+    });
   });
 });
