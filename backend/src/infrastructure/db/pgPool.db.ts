@@ -1,7 +1,7 @@
 import pkg from "pg";
-import { config } from "dotenv";
+// import { config } from "dotenv";
 
-config(); // load environment variables
+// config(); // load environment variables
 
 const { Pool } = pkg;
 
@@ -10,7 +10,7 @@ const pool = new Pool({
 });
 
 pool.on("connect", () => {
-  console.log("pgPool.ts: Connected to Posgresql\n");
+  console.log(process.env.DATABASE_URL, "pgPool.ts: Connected to Posgresql\n");
 });
 
 export default pool;
