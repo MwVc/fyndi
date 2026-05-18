@@ -2,11 +2,11 @@ import type { Response } from "express";
 import type { ErrorCode } from "../errors/code.errors.js";
 
 // standardized success API response
-export const successResponse = (
+export const successResponse = <T>(
   res: Response,
   statusCode: number,
-  data: unknown,
-  message: string,
+  data: T,
+  message: string
 ) => {
   return res.status(statusCode).json({
     success: true,
@@ -23,7 +23,7 @@ export const errorResponse = (
   statusCode: number,
   errorCode: ErrorCode,
   message: string,
-  details: unknown = null,
+  details: unknown = null
 ) => {
   return res.status(statusCode).json({
     success: false,
