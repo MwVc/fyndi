@@ -54,6 +54,16 @@ const login = async (userCredentials: LoginUserInput) => {
   const user = await userModels.getByEmail(sanitizedEmail);
   // console.log("users/services:", email, password, user);
 
+  const {
+    first_name: firstName,
+    last_name: lastName,
+    password,
+    created_at,
+    ...remainingData
+  } = user;
+
+  const safeUser = { firstName, lastName, ...remainingData }; // create user object that can be exposed to the client
+
   if (!user) {
     throw new ApiError(
       400,
@@ -95,7 +105,7 @@ const login = async (userCredentials: LoginUserInput) => {
     throw new Error("Failed to store refresh token");
   }
 
-  return { user, accessToken, refreshToken, csrfToken };
+  return { safeUser, accessToken, refreshToken, csrfToken };
 };
 
 const refresh = async (userClaim: UserClaim, refresh_token: string) => {
