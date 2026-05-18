@@ -1,3 +1,4 @@
+import "./infrastructure/config/env.js";
 import express from "express";
 import type { Request, Response } from "express";
 import cors from "./infrastructure/config/cors.js";
@@ -8,7 +9,6 @@ import { limiter } from "./modules/auth/middlewares/rate_limit.middleware.js";
 import { verifyCsrfToken } from "./modules/auth/middlewares/csrf.middleware.js";
 import { accessTokenMiddleware } from "./modules/auth/middlewares/verify_access_token.middleware.js";
 import { successResponse } from "./infrastructure/http/response.js";
-import "./infrastructure/config/env.js";
 
 const app = express();
 
