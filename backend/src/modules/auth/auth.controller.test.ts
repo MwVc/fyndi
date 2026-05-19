@@ -10,6 +10,17 @@ jest.mock("./middlewares/verify_access_token.middleware.ts", () => ({
   accessTokenMiddleware: (req: any, res: any, next: any) => next(),
 }));
 
+jest.mock("./middlewares/verify_refresh_token.middleware.ts", () => ({
+  refreshTokenMiddleware: (req: any, res: any, next: any) => {
+    req.user = {
+      userId: "1",
+      role: "user",
+    };
+
+    next();
+  },
+}));
+
 // mock the service layer before app is imported
 jest.mock("./auth.service.js");
 
@@ -43,16 +54,60 @@ describe("registerUser controller", () => {
 });
 
 describe("loginUser controller", () => {
-  it("Should login a user successfully", async () => {
+  it("Should login user successfully", async () => {
     // 1. Mock service
     (authServices.login as jest.Mock).mockResolvedValue({
       user: {
-        id: 0,
+        id: "0",
         firstName: "Victor",
         lastName: "Mwadime",
         email: "victormwadime@gmail.com",
-        role: "admin",
+        role: "user",
       },
+      accessToken: { token: "random token string", maxAge: 15 * 60 * 1000 },
+      refreshToken: {
+        token: "random token string",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      },
+      csrfToken: "random token string",
     });
+
+    // call API
+    const response = await request(app).post("/auth/login").send({
+      email: "victormwadime@gmail.com",
+      password: "randompasswordstring",
+    });
+
+    // assertions
+    expect(response.statusCode).toBe(200);
+    expect(response.body.message).toBe("Logged in");
+
+    // check controller called service correctly
+    expect(authServices.login).toHaveBeenCalledWith({
+      email: "victormwadime@gmail.com",
+      password: "randompasswordstring",
+    });
+  });
+});
+
+describe("refreshUser controller", () => {
+  it("Should refresh user successfully", async () => {
+    // mock service
+    (authServices.refresh as jest.Mock).mockResolvedValue({
+      accessToken: { token: "random token string", maxAge: 15 * 60 * 1000 },
+      refreshToken: {
+        token: "random token string",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      },
+      csrfToken: "random token string",
+    });
+
+    // call API
+    const response = await await request(app).post("/auth/refresh").send();
+
+    // assertions
+    expect(response.statusCode).toBe(200);
+    expect(response.body.message).toBe("Refresh successful");
+    expect(authServices.login).toHaveBeenCalledWith;
   });
 });
