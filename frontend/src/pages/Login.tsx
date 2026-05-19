@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { loginUser } from "../api/auth";
+import { googleLogin, loginUser } from "../api/auth";
 import { UserContext } from "../context/UserProvider";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -35,6 +35,11 @@ const Login = () => {
     // clear form data
     setEmail("");
     setPassword("");
+  };
+
+  const loginWithGoogle = async () => {
+    const response = await googleLogin();
+    console.log(response);
   };
 
   return (
@@ -75,7 +80,10 @@ const Login = () => {
           </form>
           <div className="border-t border-base-300 flex flex-col gap-4 p-5 w-full">
             {/* login with google */}
-            <button className="btn bg-white text-black border-[#e5e5e5]">
+            <button
+              className="btn bg-white text-black border-[#e5e5e5]"
+              onClick={loginWithGoogle}
+            >
               <svg
                 aria-label="Google logo"
                 width="16"
