@@ -27,7 +27,7 @@ export const registerUser = async ({
 
 export const loginUser = async (
   email: string,
-  password: string,
+  password: string
 ): Promise<ApiResult<null>> => {
   const response: ApiResult<null> = await apiClient.post("/auth/login", {
     email: email,
@@ -56,4 +56,8 @@ export const logoutUser = async (): Promise<ApiResult<null>> => {
 
 export const hitServer = async (): Promise<ApiResult<null>> => {
   return await apiClient.get("/");
+};
+
+export const googleLogin = async (): Promise<ApiResult<null>> => {
+  return await apiClient.get("/auth/google");
 };
