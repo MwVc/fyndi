@@ -8,8 +8,8 @@ export const normalizeError = (error: any) => {
     data: null,
     error: {
       errorCode: error.response?.data?.error?.code || "UNKNOWN_ERROR",
-      statusCode: error.response?.status,
-      details: error.response?.data?.error?.details,
+      statusCode: error.response?.status || null,
+      details: error.response?.data?.error?.details || null,
       message:
         error.response?.data?.error?.message ||
         error.message ||
