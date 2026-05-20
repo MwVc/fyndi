@@ -9,14 +9,16 @@ import { limiter } from "./modules/auth/middlewares/rate_limit.middleware.js";
 import { verifyCsrfToken } from "./modules/auth/middlewares/csrf.middleware.js";
 import { accessTokenMiddleware } from "./modules/auth/middlewares/verify_access_token.middleware.js";
 import { successResponse } from "./infrastructure/http/response.js";
+import passport from "passport";
+import "./modules/auth/oauth/google.strategy.js";
 
 const app = express();
 
 // middleware
-
+app.use(limiter);
+app.use(passport.initialize());
 app.use(cors);
 app.use(express.json());
-app.use(limiter);
 app.use(cookieParser()); // parse incoming cookies and populate req.cookies
 
 // routes
