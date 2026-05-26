@@ -1,8 +1,9 @@
 import { useContext, useState } from "react";
-import { googleLogin, loginUser } from "../api/auth";
+import { loginUser } from "../api/auth";
 import { UserContext } from "../context/UserProvider";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+const API_URL = import.meta.env.VITE_BASE_URL;
 
 const Login = () => {
   const { setIsLoggedin } = useContext(UserContext);
@@ -38,8 +39,7 @@ const Login = () => {
   };
 
   const loginWithGoogle = async () => {
-    const response = await googleLogin();
-    console.log(response);
+    window.location.href = `${API_URL}/auth/google`;
   };
 
   return (
