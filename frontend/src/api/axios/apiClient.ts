@@ -25,7 +25,6 @@ apiClient.interceptors.request.use((config) => {
 
 // intercept every response
 apiClient.interceptors.response.use(
-  //
   (response) => {
     return response.data;
   },
@@ -40,7 +39,7 @@ apiClient.interceptors.response.use(
     }
 
     return normalizeError(error);
-  },
+  }
 );
 
 // retry error 401
