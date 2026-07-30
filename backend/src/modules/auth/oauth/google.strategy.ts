@@ -24,6 +24,10 @@ passport.use(
       callbackURL,
     },
     async (accessToken: any, refreshToken: any, profile: any, done: any) => {
+      console.log("google strategy hit");
+
+      const user = "this is the user";
+
       return done(null, profile);
     }
   )
