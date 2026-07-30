@@ -7,7 +7,7 @@ import { verifyRefreshToken } from "../../../infrastructure/security/jwt/jwt_tok
 export const refreshTokenMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   console.log("Refresh token middleware hit");
 
@@ -22,7 +22,7 @@ export const refreshTokenMiddleware = (
       NaN,
       AuthErrorCodes.JWT_SECRET_UNDEFINED,
       "Check .env file",
-      false,
+      false
     );
   }
 
