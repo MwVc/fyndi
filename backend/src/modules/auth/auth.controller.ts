@@ -11,7 +11,6 @@ import type {
 } from "./auth.types.js";
 import type { UserClaim } from "./auth.claims.js";
 import { AuthErrorCodes } from "../../infrastructure/errors/code.errors.js";
-import type { PublicUser } from "../users/users.types.js";
 
 export const registerUser = async (req: Request, res: Response) => {
   const data = req.body as RegisterUserInput;
