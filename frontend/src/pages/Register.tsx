@@ -2,6 +2,7 @@ import { useState } from "react";
 import { registerUser } from "../api/auth";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+const API_URL = import.meta.env.VITE_BASE_URL;
 
 const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,6 +41,10 @@ const Register = () => {
     setPassword("");
     setConfirmPassword("");
     setIsPasswordMatch(true);
+  };
+
+  const loginWithGoogle = async () => {
+    window.location.href = `${API_URL}/auth/google`;
   };
 
   return (
@@ -88,7 +93,9 @@ const Register = () => {
               type="password"
               required
               placeholder="Confirm Password"
-              className={`input ${isPasswordMatch ? "input-bordered" : "input-error"} w-full`}
+              className={`input ${
+                isPasswordMatch ? "input-bordered" : "input-error"
+              } w-full`}
               value={confirmPassword}
               onChange={(event) => {
                 setConfirmPassword(event.target.value);
@@ -107,7 +114,10 @@ const Register = () => {
           <div className="divider">OR</div>
           <div className="flex flex-col gap-4 p-5 w-full">
             {/* login with google */}
-            <button className="btn bg-white text-black border-[#e5e5e5]">
+            <button
+              className="btn bg-white text-black border-[#e5e5e5]"
+              onClick={loginWithGoogle}
+            >
               <svg
                 aria-label="Google logo"
                 width="16"
