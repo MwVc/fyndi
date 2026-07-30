@@ -7,7 +7,7 @@ export const errorMiddleware = (
   err: unknown,
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   // handle internal ApiError
   if (err instanceof ApiError) {
@@ -27,13 +27,13 @@ export const errorMiddleware = (
     }
   }
 
-  console.log("This is from error middleware", err); // debugging
+  console.log("This is from error middleware. Error Stack: ", err, "\n"); // debugging
 
   return errorResponse(
     // fallback error for non ApiError
     res,
     500,
     SystemErrorCodes.INTERNAL_SERVER_ERROR,
-    "Internal Server Error",
+    "Internal Server Error"
   );
 };
