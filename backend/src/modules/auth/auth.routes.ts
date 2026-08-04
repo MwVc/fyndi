@@ -3,6 +3,8 @@ import { registerUser, loginUser, refreshUser } from "./auth.controller.js";
 import { logoutUser } from "./auth.controller.js";
 import { refreshTokenMiddleware } from "./middlewares/verify_refresh_token.middleware.js";
 import passport from "passport";
+import googleAuthenticate from "./middlewares/googleAuthenticate.js";
+import googleCallback from "./middlewares/googleCallback.js";
 
 const authRouter = express.Router();
 const frontendURL = process.env.FRONTEND_URL;
@@ -13,21 +15,18 @@ authRouter.get(
     console.log("/google route hit");
     next();
   },
-  passport.authenticate("google", {
-    scope: ["email", "profile"],
-    session: false,
-    prompt: "select_account consent", // force google to show account selection & permission screen
-  })
+  googleAuthenticate
 );
+
 authRouter.get(
   "/google/callback",
   (req, res, next) => {
     console.log("/google/callback route hit");
     next();
   },
-  passport.authenticate("google", {
-    session: false,
-  }),
+
+  googleCallback,
+
   (req, res, next) => {
     console.log("/google/callback after passport middleware");
     next();
@@ -35,7 +34,7 @@ authRouter.get(
 
   (req, res) => {
     console.log(req.user);
-    res.redirect(`${frontendURL}/login`);
+    res.redirect(`${frontendURL}/`);
   }
 );
 authRouter.post("/register", registerUser);
