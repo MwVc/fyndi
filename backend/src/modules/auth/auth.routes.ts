@@ -2,8 +2,8 @@ import express from "express";
 import { registerUser, loginUser, refreshUser } from "./auth.controller.js";
 import { logoutUser } from "./auth.controller.js";
 import { refreshTokenMiddleware } from "./middlewares/verify_refresh_token.middleware.js";
-import googleAuthenticate from "./middlewares/googleAuthenticate.js";
-import googleCallback from "./middlewares/googleCallback.js";
+import googleAuthenticate from "./middlewares/google/googleAuthenticate.js";
+import googleCallback from "./middlewares/google/googleCallback.js";
 
 const authRouter = express.Router();
 const frontendURL = process.env.FRONTEND_URL;
@@ -22,11 +22,6 @@ authRouter.get(
   (req, res, next) => {
     console.log("/google/callback after passport middleware");
     next();
-  },
-
-  (req, res) => {
-    console.log(req.user);
-    res.redirect(`${frontendURL}/`);
   }
 );
 
