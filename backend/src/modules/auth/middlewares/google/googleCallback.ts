@@ -1,7 +1,5 @@
 import passport from "passport";
 import type { Request, NextFunction, Response } from "express";
-import { AuthErrorCodes } from "../../../infrastructure/errors/code.errors.js";
-import { errorResponse } from "../../../infrastructure/http/response.js";
 
 const frontendURL = process.env.FRONTEND_URL;
 
@@ -16,23 +14,16 @@ export default (req: Request, res: Response, next: NextFunction) => {
       console.log("(err, user) callback function has been called");
 
       if (err) {
+        console.log(err);
         res.redirect(`${frontendURL}/login?error=google`);
-        next(err);
+        // next(err);
         return;
       }
 
       if (!user) {
         res.redirect(`${frontendURL}/login?error=unauthorised`);
-
-        return errorResponse(
-          res,
-          401,
-          AuthErrorCodes.UNAUTHORIZED,
-          "Unauthorized"
-        );
+        return;
       }
-
-      req.user = user;
       next();
     }
   )(req, res, next);
