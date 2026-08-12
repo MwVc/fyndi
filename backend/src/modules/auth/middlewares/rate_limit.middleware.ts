@@ -1,9 +1,8 @@
 import rateLimit from "express-rate-limit";
 import ApiError from "../../../infrastructure/errors/api.errors.js";
-import {
-  PermissionErrorCodes,
-  UserErrorCodes,
-} from "../../../infrastructure/errors/code.errors.js";
+import { PermissionErrorCodes } from "../../../infrastructure/errors/code.errors.js";
+const frontendURL = process.env.FRONTEND_URL;
+const backendURL = process.env.BACKEND_URL;
 
 export const limiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
@@ -16,8 +15,16 @@ export const limiter = rateLimit({
       options.statusCode,
       PermissionErrorCodes.TOO_MANY_REQUESTS,
       "Too Many Requests",
-      true,
+      true
     );
+
+    console.log("Limiter middleware");
+
+    if (req.path === `/auth/google/callback` || req.path === "/auth/google") {
+      console.log("Rate limiter has been hit\n");
+      return res.redirect(`${frontendURL}/login?error=rate_limit`);
+    }
+
     next(error);
   },
 });
