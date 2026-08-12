@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS clients CASCADE;
-DROP TABLE IF EXISTS fundis;
+DROP TABLE IF EXISTS fundis CASCADE;
 DROP TABLE IF EXISTS jobs CASCADE;
-DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS categories CASCADE;
 DROP TABLE IF EXISTS fundi_categories;
 DROP TABLE IF EXISTS refresh_tokens;
 
@@ -27,6 +27,13 @@ CREATE TABLE users (
     password TEXT NOT NULL,
     role VARCHAR(20) DEFAULT 'user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE oauth_accounts (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    provider VARCHAR(20),
+    provider_user_id VARCHAR(100)
 );
 
 
