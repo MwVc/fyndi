@@ -1,5 +1,6 @@
 import passport from "passport";
 import type { Request, NextFunction, Response } from "express";
+import type { OAuthProfile } from "../../auth.types.js";
 
 const frontendURL = process.env.FRONTEND_URL;
 
@@ -24,6 +25,15 @@ export default (req: Request, res: Response, next: NextFunction) => {
         res.redirect(`${frontendURL}/login?error=unauthorised`);
         return;
       }
+      const profile: OAuthProfile = {
+        providerUserId: user._json.sub,
+        provider: user.provider,
+        email: user._json.email,
+        firstName: user._json.given_name,
+        lastName: user._json.family_name,
+        avatar: user._json.picture,
+      };
+      req.oauthProfile = profile;
       next();
     }
   )(req, res, next);
