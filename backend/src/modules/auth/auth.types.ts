@@ -5,6 +5,15 @@ export interface RegisterUserInput {
   password: string;
 }
 
+export interface OAuthProfile {
+  providerUserId: string;
+  avatar: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  provider: "google" | "facebook";
+}
+
 export interface LoginUserInput {
   email: string;
   password: string;
