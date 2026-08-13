@@ -46,6 +46,25 @@ const register = async ({
   }
 };
 
+const registerOauth = async (userInput) => {
+  // sanitize email input
+  const sanitizedEmail = userInput.email.trim().toLocaleLowerCase();
+
+  try {
+    const user: DatabaseUser = await userModels.insert({
+      firstName: userInput.firstName,
+      lastName: userInput.lastName,
+      email: sanitizedEmail,
+      password: null,
+    });
+  } catch (error: any) {
+    if (error.code === "23505") {
+      throw new ApiError(400, UserErrorCodes.USER_EXISTS, "User Exists", true);
+    }
+    throw error;
+  }
+};
+
 const login = async (userCredentials: LoginUserInput) => {
   // sanitize emailinput
   const sanitizedEmail = userCredentials.email.trim().toLocaleLowerCase();
