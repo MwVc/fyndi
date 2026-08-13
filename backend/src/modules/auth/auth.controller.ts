@@ -6,6 +6,7 @@ import type { Request, Response } from "express";
 import { authServices } from "./auth.service.js";
 import type {
   LoginUserInput,
+  OAuthProfile,
   RegisterUserInput,
   SafeUser,
 } from "./auth.types.js";
@@ -19,6 +20,14 @@ export const registerUser = async (req: Request, res: Response) => {
 
   // don't send user data to frontend upon creation
   successResponse(res, 201, null, "user created successfully");
+};
+
+export const registerOauthUser = async (req: Request, res: Response) => {
+  if (!req.oauthProfile) {
+    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
+  }
+
+  const user: OAuthProfile = req.oauthProfile;
 };
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -52,7 +61,12 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 export const refreshUser = async (req: Request, res: Response) => {
-  const user = req.user as UserClaim;
+  // check falsey state of req.user
+  if (!req.user) {
+    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
+  }
+
+  const user: UserClaim = req.user;
   console.log("Log from refreshUser in auth controller:", user);
 
   // destructure the token from cookies
