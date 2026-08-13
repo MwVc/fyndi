@@ -3,6 +3,7 @@
 // import type definitions
 import "express-serve-static-core";
 import type { UserClaim } from "../../modules/auth/auth.claims.ts";
+import type { OAuthProfile } from "../../modules/auth/auth.types.ts";
 
 // Module augmentation: extend the existing Express Request interface
 declare module "express-serve-static-core" {
@@ -11,5 +12,6 @@ declare module "express-serve-static-core" {
     cookies: Record<string, string>;
     // signedCookies: Record<string, string>;
     user?: UserClaim;
+    oauthProfile?: OAuthProfile;
   }
 }
