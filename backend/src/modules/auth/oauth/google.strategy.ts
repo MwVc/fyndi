@@ -23,12 +23,16 @@ passport.use(
       clientSecret,
       callbackURL,
     },
+
     async (accessToken: any, refreshToken: any, profile: any, done: any) => {
-      console.log("google strategy hit");
+      try {
+        console.log("google strategy hit\n");
+        console.log(profile);
 
-      const user = "this is the user";
-
-      return done(null, profile);
+        return done(null, profile);
+      } catch (error) {
+        done(error);
+      }
     }
   )
 );
