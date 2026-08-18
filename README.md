@@ -143,18 +143,18 @@ Over time, a professional's profile can represent more than a star rating.
 
 For example:
 
-`John Mwangi`
-`Electrician`
-`Recorded jobs: 127`
-`Participating clients: 96`
-`Customer confirmations: 112`
-`Average rating: 4.7 / 5`
+    John Mwangi
+    Electrician
+    Recorded jobs: 127
+    Participating clients: 96
+    Customer confirmations: 112
+    Average rating: 4.7 / 5
 
-`Areas of work:`
-`- Residential wiring`
-`- Commercial wiring`
-`- Solar installation`
-`- Electrical repairs`
+    Areas of work:
+    - Residential wiring
+    - Commercial wiring
+    - Solar installation
+    - Electrical repairs
 
 The goal is to make practical experience more visible, structured and portable.
 
