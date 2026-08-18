@@ -156,68 +156,87 @@ For example:
 `- Solar installation`
 `- Electrical repairs`
 
-Fyndi's mission is to **bridge the trust gap** between clients and local fundis.
-It empowers small-scale skilled workers with visibility and reputation, while protecting clients through transparent contracts```
-
-> _"Building trust in local skills, one job at a time."_
+The goal is to make practical experience more visible, structured and portable.
 
 ---
 
-## ⚙️ Tech Stack
+## Technical Architecture
 
-| Layer                       | Technology        | Description                                                          |
-| --------------------------- | ----------------- | -------------------------------------------------------------------- |
-| **Backend**                 | Node.js (Express) | Core REST API handling requests, authentication, and data management |
-| **Database**                | PostgreSQL        | Stores all users, jobs and reviews with relational integrity         |
-| **Auth**                    | JWT + bcrypt      | Handles secure authentication and password hashing                   |
-| **Environment**             | dotenv            | Manages environment variables for secure configuration               |
-| **Server Restart**          | nodemon           | Enables automatic reloads during development                         |
-| **File Uploads (optional)** | Cloudinary        | Stores images or documents for verification                          |
-| **Mailing**                 | Nodemailer        | Sends email notifications and confirmations                          |
+Fyndi is being developed as a **backend-focused system** with an emphasis on security, data integrity and audible workflows.
 
----
+The architecture is organised around modular backend components.
 
-## 🧠 System Overview
+Areas of the system include:
 
-### 🧭 Core Concept
+- Authentication and authorization
+- User and role management
+- Job lifecycle management
+- Professional profiles
+- Reviews and reputation
+- Evidence management
+- Audit logs
+- Notifications
+- Real-time communication
+- Verification workflows
 
-Fyndi connects **clients** and **Fundis** in a trusted ecosystem:
-
-1. Clients post job requests
-2. Fundis apply or get matched automatically
-3. Clients choose and apply for the job
-4. Fundi completes the job
+The system is designed to evolve toward event-driven workflows where appropriate.
 
 ---
 
-## 👥 User Roles
+## Tech Stack
 
-### 👤 Client
+| Layer                        | Technology                        |
+| ---------------------------- | --------------------------------- |
+| **Backend**                  | Node.js (Express), Typescript     |
+| **Database**                 | PostgreSQL                        |
+| **Auth**                     | JWT, OAuth, bcrypt, RBAC          |
+| **Real-time**                | Websockets / Socket.IO            |
+| **Caching & infrastructure** | Redis                             |
+| **File Uploads (optional)**  | Cloudinary                        |
+| **Mailing**                  | Nodemailer                        |
+| **File Storage**             | Cloudinary                        |
+| **Testing**                  | Automated API/integration testing |
+| **Deployment**               | Docker / cloud deployment         |
 
-- Registers or logs in
-- Posts jobs (type, location, budget, description)
-- Reviews matched fundis and sends offers
-- Client selects fundi from offers received
-- Fundi completes work
-- Client rates and reviews fundi
-
-### 👷🏽 Fundi
-
-- Registers or logs in
-- Uploads skill certificates or IDs for verification
-- Browses or receives matched jobs
-- Accepts or negotiates offers
-- Marks jobs as completed
-- Receives payment after client approval
-- Builds reputation through reviews
+The exact implementation will develop as the system develops.
 
 ---
 
-## 🔩 Backend Architecture
+## Roadmap
 
-Fyndi follows the **MVC pattern** with modular organization.
+### Core Platform
 
-## 🧱 Future Enhancements
+- Client and fundi accounts
+- Authentication
+- Role-based authorization
+- Job creation and discovery
+- Job lifecycle management
+- Offers / applications
+- Reviews and ratings
+- Professional profiles
 
-- Implement real-time notifications(Socket.io)
-- Add job recommendation algorithm
+### Trust & Reputation
+
+- Completed-work records
+- Evidence attachments
+- Completion confirmation
+- Audit history
+- Verification levels
+- Dispute mechanisms
+- Reputation system
+
+### Communication
+
+- Real-time job communication
+- WebSocket-based chat
+- Real-time notifications
+- Email notifications
+
+### Infrastructure
+
+- Redis
+- Background jobs
+- Automated testing
+- Docker
+- Production deployment
+- Monitoring and observability
