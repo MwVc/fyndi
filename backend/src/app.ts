@@ -15,7 +15,12 @@ import "./modules/auth/oauth/google.strategy.js";
 const app = express();
 
 // middleware
-app.use(limiter);
+app.use(limiter, (req, res, next) => {
+  console.log("This is from the middleware in the exress limiter middleware: ");
+  console.log(req.path);
+  next();
+});
+
 app.use(passport.initialize());
 app.use(cors);
 app.use(express.json());
