@@ -15,14 +15,14 @@ export const hashPassword = async (password: string): Promise<string> => {
       SystemErrorCodes.PASSWORD_HASH_FAILED,
       "Internal Server Error",
       false,
-      error,
+      error
     );
   }
 };
 
 export const comparePassword = async (
   plainPassword: string,
-  hashedPassword: string,
+  hashedPassword: string
 ): Promise<boolean> => {
   try {
     const isMatch = await bcrypt.compare(plainPassword, hashedPassword);
@@ -34,7 +34,7 @@ export const comparePassword = async (
       SystemErrorCodes.PASSWORD_COMPARE_FAILED,
       "Internal Server Error",
       false,
-      error,
+      error
     );
   }
 };
