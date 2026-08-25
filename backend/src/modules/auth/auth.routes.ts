@@ -3,7 +3,7 @@ import {
   registerUser,
   loginUser,
   refreshUser,
-  registerOauthUser,
+  oauthSignIn,
 } from "./auth.controller.js";
 import { logoutUser } from "./auth.controller.js";
 import { refreshTokenMiddleware } from "./middlewares/verify_refresh_token.middleware.js";
@@ -23,7 +23,7 @@ authRouter.get(
 
   googleCallback,
 
-  registerOauthUser
+  oauthSignIn
 );
 
 authRouter.post("/register", registerUser);
