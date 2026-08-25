@@ -12,7 +12,11 @@ import {
 } from "../../infrastructure/security/jwt/jwt_token.js";
 import { refreshTokenModels } from "./refreshToken.models.js";
 import { claims, type UserClaim } from "./auth.claims.js";
-import type { LoginUserInput, RegisterUserInput } from "./auth.types.js";
+import type {
+  LoginUserInput,
+  OAuthProfile,
+  RegisterUserInput,
+} from "./auth.types.js";
 import type { DatabaseUser } from "../users/users.types.js";
 
 const register = async ({
@@ -46,22 +50,33 @@ const register = async ({
   }
 };
 
-const registerOauth = async (userInput) => {
+const signInWithOauth = async (profile: OAuthProfile) => {
   // sanitize email input
-  const sanitizedEmail = userInput.email.trim().toLocaleLowerCase();
+  const sanitizedEmail = profile.email.trim().toLocaleLowerCase();
 
-  try {
-    const user: DatabaseUser = await userModels.insert({
-      firstName: userInput.firstName,
-      lastName: userInput.lastName,
-      email: sanitizedEmail,
-      password: null,
-    });
-  } catch (error: any) {
-    if (error.code === "23505") {
-      throw new ApiError(400, UserErrorCodes.USER_EXISTS, "User Exists", true);
+  //check if user exists
+  const user = await userModels.getByEmail(sanitizedEmail);
+  // console.log("users/services:", email, password, user);
+
+  // if user does not exist insert new user
+  if (!user) {
+    try {
+      const user: DatabaseUser = await userModels.insert({
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        email: sanitizedEmail,
+        password: null,
+      });
+
+      console.log(user);
+
+      return completeSignIn(user);
+    } catch (error: any) {
+      // if (error.code === "23505") {
+      //   throw new ApiError(400, UserErrorCodes.USER_EXISTS, "User Exists", true);
+      // }
+      throw error;
     }
-    throw error;
   }
 };
 
@@ -73,17 +88,7 @@ const login = async (userCredentials: LoginUserInput) => {
   const user = await userModels.getByEmail(sanitizedEmail);
   // console.log("users/services:", email, password, user);
 
-  const {
-    first_name: firstName,
-    last_name: lastName,
-    password,
-    created_at,
-    ...remainingData
-  } = user;
-
-  const safeUser = { firstName, lastName, ...remainingData }; // create user object that can be exposed to the client
-
-  if (!user) {
+  if (!user || !user.password) {
     throw new ApiError(
       400,
       ValidationErrorCodes.INVALID_CREDENTIALS,
@@ -107,24 +112,7 @@ const login = async (userCredentials: LoginUserInput) => {
     );
   }
 
-  // create user claim
-  const userClaim = claims.createClaims(user);
-
-  // create tokens
-  const { accessToken, refreshToken, csrfToken } =
-    generateUserTokens(userClaim);
-
-  // on successfull login store refreshToken to the database
-  const inserTokenResponse = await refreshTokenModels.insertToken(
-    refreshToken,
-    user.id
-  );
-
-  if (!inserTokenResponse) {
-    throw new Error("Failed to store refresh token");
-  }
-
-  return { safeUser, accessToken, refreshToken, csrfToken };
+  return completeSignIn(user);
 };
 
 const refresh = async (userClaim: UserClaim, refresh_token: string) => {
@@ -173,8 +161,39 @@ const generateUserTokens = (userClaim: UserClaim) => {
   return { accessToken, refreshToken, csrfToken };
 };
 
+const completeSignIn = async (user: DatabaseUser) => {
+  const {
+    first_name: firstName,
+    last_name: lastName,
+    created_at,
+    ...remainingData
+  } = user;
+
+  const safeUser = { firstName, lastName, ...remainingData }; // create user object that can be exposed to the client
+
+  // create user claim
+  const userClaim = claims.createClaims(user);
+
+  // create tokens
+  const { accessToken, refreshToken, csrfToken } =
+    generateUserTokens(userClaim);
+
+  // on successfull login store refreshToken to the database
+  const inserTokenResponse = await refreshTokenModels.insertToken(
+    refreshToken,
+    user.id
+  );
+
+  if (!inserTokenResponse) {
+    throw new Error("Failed to store refresh token");
+  }
+
+  return { safeUser, accessToken, refreshToken, csrfToken };
+};
+
 export const authServices = {
   register,
+  signInWithOauth,
   login,
   refresh,
   logout,
