@@ -22,12 +22,16 @@ export const registerUser = async (req: Request, res: Response) => {
   successResponse(res, 201, null, "user created successfully");
 };
 
-export const registerOauthUser = async (req: Request, res: Response) => {
-  if (!req.oauthProfile) {
+export const oauthSignIn = async (req: Request, res: Response) => {
+  const user = req.oauthProfile;
+
+  if (!user) {
     return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
   }
 
-  const user: OAuthProfile = req.oauthProfile;
+  await authServices.signInWithOauth(user);
+
+  return successResponse(res, 201, null, "user created successfully");
 };
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -57,7 +61,7 @@ export const loginUser = async (req: Request, res: Response) => {
       secure: true,
     });
 
-  successResponse<SafeUser>(res, 200, userData.safeUser, "Logged in");
+  return successResponse<SafeUser>(res, 200, userData.safeUser, "Logged in");
 };
 
 export const refreshUser = async (req: Request, res: Response) => {
@@ -98,7 +102,7 @@ export const refreshUser = async (req: Request, res: Response) => {
       secure: true,
     });
 
-  successResponse(res, 200, null, "Refresh successful");
+  return successResponse(res, 200, null, "Refresh successful");
 };
 
 export const logoutUser = async (req: Request, res: Response) => {
@@ -125,5 +129,5 @@ export const logoutUser = async (req: Request, res: Response) => {
       secure: true,
     });
 
-  successResponse(res, 200, null, "Logged out");
+  return successResponse(res, 200, null, "Logged out");
 };
