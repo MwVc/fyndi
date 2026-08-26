@@ -14,7 +14,13 @@ export const refreshTokenMiddleware = (
   const { refresh_token } = req.cookies;
 
   if (!refresh_token) {
-    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
+    return errorResponse({
+      res,
+      statusCode: 401,
+      errorCode: AuthErrorCodes.UNAUTHORIZED,
+      message: "Unauthorized",
+      details: null,
+    });
   }
 
   if (!process.env.JWT_REFRESH_SECRET) {
@@ -35,6 +41,12 @@ export const refreshTokenMiddleware = (
 
     next();
   } catch (error) {
-    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
+    return errorResponse({
+      res,
+      statusCode: 401,
+      errorCode: AuthErrorCodes.UNAUTHORIZED,
+      message: "Unauthorized",
+      details: null,
+    });
   }
 };
