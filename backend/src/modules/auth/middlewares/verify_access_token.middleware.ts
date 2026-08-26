@@ -7,12 +7,18 @@ import { verifyAccessToken } from "../../../infrastructure/security/jwt/jwt_toke
 export const accessTokenMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const { access_token } = req.cookies;
 
   if (!access_token) {
-    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
+    return errorResponse({
+      res,
+      statusCode: 401,
+      errorCode: AuthErrorCodes.UNAUTHORIZED,
+      message: "Unauthorized",
+      details: null,
+    });
   }
 
   if (!process.env.JWT_ACCESS_SECRET) {
@@ -20,16 +26,25 @@ export const accessTokenMiddleware = (
       NaN,
       AuthErrorCodes.JWT_SECRET_UNDEFINED,
       "Check .env file",
-      false,
+      false
     );
   }
 
   try {
     const userClaim = verifyAccessToken(access_token);
 
+    // const userClaim = { userId, role };
+    req.user = userClaim;
+
     next();
     return;
   } catch (error) {
-    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
+    return errorResponse({
+      res,
+      statusCode: 401,
+      errorCode: AuthErrorCodes.UNAUTHORIZED,
+      message: "Unauthorized",
+      details: null,
+    });
   }
 };
