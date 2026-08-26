@@ -23,7 +23,13 @@ export const errorMiddleware = (
 
     if (err.expose) {
       console.log(err);
-      return errorResponse(res, err.statusCode, err.errorCode, err.message);
+      return errorResponse({
+        res,
+        statusCode: err.statusCode,
+        errorCode: err.errorCode,
+        message: err.message,
+        details: err.details,
+      });
     }
   }
 
@@ -31,9 +37,12 @@ export const errorMiddleware = (
 
   return errorResponse(
     // fallback error for non ApiError
-    res,
-    500,
-    SystemErrorCodes.INTERNAL_SERVER_ERROR,
-    "Internal Server Error"
+    {
+      res,
+      statusCode: 500,
+      errorCode: SystemErrorCodes.INTERNAL_SERVER_ERROR,
+      message: "Internal Server Error",
+      details: null,
+    }
   );
 };
