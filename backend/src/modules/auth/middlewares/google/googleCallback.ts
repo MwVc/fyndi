@@ -2,8 +2,6 @@ import passport from "passport";
 import type { Request, NextFunction, Response } from "express";
 import type { OAuthProfile } from "../../auth.types.js";
 
-const frontendURL = process.env.FRONTEND_URL;
-
 export default (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate(
     "google",
@@ -15,16 +13,20 @@ export default (req: Request, res: Response, next: NextFunction) => {
       console.log("(err, user) callback function has been called");
 
       if (err) {
-        console.log(err);
-        res.redirect(`${frontendURL}/login?error=google`);
-        // next(err);
-        return;
+        req.oauthError = err;
+        // console.log(err);
+        // res.redirect(`${frontendURL}/login?error=google`);
+        // // next(err);
+        return next();
       }
 
       if (!user) {
-        res.redirect(`${frontendURL}/login?error=unauthorised`);
-        return;
+        req.oauthError = new Error("Google authentification failed");
+        // res.redirect(`${frontendURL}/login?error=unauthorised`);
+        // return;
+        return next();
       }
+
       const profile: OAuthProfile = {
         providerUserId: user._json.sub,
         provider: user.provider,
@@ -33,6 +35,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
         lastName: user._json.family_name,
         avatar: user._json.picture,
       };
+
       req.oauthProfile = profile;
       next();
     }
