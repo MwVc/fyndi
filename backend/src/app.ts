@@ -15,11 +15,7 @@ import "./modules/auth/oauth/google.strategy.js";
 const app = express();
 
 // middleware
-app.use(limiter, (req, res, next) => {
-  console.log("This is from the middleware in the exress limiter middleware: ");
-  console.log(req.path);
-  next();
-});
+app.use(limiter);
 
 app.use(passport.initialize());
 app.use(cors);
@@ -33,12 +29,12 @@ app.get(
   accessTokenMiddleware,
 
   (req: Request, res: Response) => {
-    successResponse(
+    successResponse({
       res,
-      200,
-      { message: "Root hit successful" },
-      "Successful Response"
-    );
+      statusCode: 200,
+      message: "Root hit successful",
+      data: "Successful Response",
+    });
   }
 );
 
