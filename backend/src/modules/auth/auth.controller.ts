@@ -19,19 +19,35 @@ export const registerUser = async (req: Request, res: Response) => {
   await authServices.register(data); // awaiting service and db layer
 
   // don't send user data to frontend upon creation
-  successResponse(res, 201, null, "user created successfully");
+  successResponse({
+    res: res,
+    statusCode: 201,
+    data: null,
+    message: "user created successfully",
+  });
 };
 
 export const oauthSignIn = async (req: Request, res: Response) => {
   const user = req.oauthProfile;
 
   if (!user) {
-    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
+    return errorResponse({
+      res: res,
+      statusCode: 401,
+      errorCode: AuthErrorCodes.UNAUTHORIZED,
+      message: "Unauthorized",
+      details: null,
+    });
   }
 
   await authServices.signInWithOauth(user);
 
-  return successResponse(res, 201, null, "user created successfully");
+  return successResponse({
+    res: res,
+    statusCode: 201,
+    data: null,
+    message: "user created successfully",
+  });
 };
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -61,13 +77,24 @@ export const loginUser = async (req: Request, res: Response) => {
       secure: true,
     });
 
-  return successResponse<SafeUser>(res, 200, userData.safeUser, "Logged in");
+  return successResponse<SafeUser>({
+    res: res,
+    statusCode: 200,
+    data: userData.safeUser,
+    message: "Logged in",
+  });
 };
 
 export const refreshUser = async (req: Request, res: Response) => {
   // check falsey state of req.user
   if (!req.user) {
-    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
+    return errorResponse({
+      res: res,
+      statusCode: 401,
+      errorCode: AuthErrorCodes.UNAUTHORIZED,
+      message: "Unauthorized",
+      details: null,
+    });
   }
 
   const user: UserClaim = req.user;
@@ -80,7 +107,13 @@ export const refreshUser = async (req: Request, res: Response) => {
   const tokens = await authServices.refresh(user, refresh_token);
 
   if (!tokens) {
-    return errorResponse(res, 401, AuthErrorCodes.UNAUTHORIZED, "Unauthorized");
+    return errorResponse({
+      res: res,
+      statusCode: 401,
+      errorCode: AuthErrorCodes.UNAUTHORIZED,
+      message: "Unauthorized",
+      details: null,
+    });
   }
 
   res
@@ -102,7 +135,12 @@ export const refreshUser = async (req: Request, res: Response) => {
       secure: true,
     });
 
-  return successResponse(res, 200, null, "Refresh successful");
+  return successResponse({
+    res: res,
+    statusCode: 200,
+    data: null,
+    message: "Refresh successful",
+  });
 };
 
 export const logoutUser = async (req: Request, res: Response) => {
@@ -129,5 +167,10 @@ export const logoutUser = async (req: Request, res: Response) => {
       secure: true,
     });
 
-  return successResponse(res, 200, null, "Logged out");
+  return successResponse({
+    res,
+    statusCode: 200,
+    data: null,
+    message: "Logged out",
+  });
 };
