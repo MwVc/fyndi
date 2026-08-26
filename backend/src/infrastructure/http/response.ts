@@ -1,13 +1,28 @@
 import type { Response } from "express";
 import type { ErrorCode } from "../errors/code.errors.js";
 
+interface SuccessResponseOptions<T> {
+  res: Response;
+  statusCode: number;
+  data: T;
+  message: string;
+}
+
+interface ErrorResponseOptions {
+  res: Response;
+  statusCode: number;
+  errorCode: ErrorCode;
+  message: string;
+  details: unknown;
+}
+
 // standardized success API response
-export const successResponse = <T>(
-  res: Response,
-  statusCode: number,
-  data: T,
-  message: string
-) => {
+export const successResponse = <T>({
+  res,
+  statusCode,
+  data,
+  message,
+}: SuccessResponseOptions<T>) => {
   return res.status(statusCode).json({
     success: true,
     data, // response data
@@ -18,13 +33,13 @@ export const successResponse = <T>(
 };
 
 // standardized error API response
-export const errorResponse = (
-  res: Response,
-  statusCode: number,
-  errorCode: ErrorCode,
-  message: string,
-  details: unknown = null
-) => {
+export const errorResponse = ({
+  res,
+  statusCode,
+  errorCode,
+  message,
+  details = null,
+}: ErrorResponseOptions) => {
   return res.status(statusCode).json({
     success: false,
     data: null,
