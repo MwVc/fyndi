@@ -6,12 +6,13 @@ import type { Request, Response } from "express";
 import { authServices } from "./auth.service.js";
 import type {
   LoginUserInput,
-  OAuthProfile,
   RegisterUserInput,
   SafeUser,
 } from "./auth.types.js";
 import type { UserClaim } from "./auth.claims.js";
 import { AuthErrorCodes } from "../../infrastructure/errors/code.errors.js";
+
+const frontendURL = process.env.FRONTEND_URL;
 
 export const registerUser = async (req: Request, res: Response) => {
   const data = req.body as RegisterUserInput;
@@ -28,26 +29,46 @@ export const registerUser = async (req: Request, res: Response) => {
 };
 
 export const oauthSignIn = async (req: Request, res: Response) => {
+  if (req.oauthError) {
+    return res.redirect(`${frontendURL}/login?error=google`);
+  }
+
   const user = req.oauthProfile;
 
   if (!user) {
-    return errorResponse({
-      res: res,
-      statusCode: 401,
-      errorCode: AuthErrorCodes.UNAUTHORIZED,
-      message: "Unauthorized",
-      details: null,
-    });
+    // return errorResponse({
+    //   res: res,
+    //   statusCode: 401,
+    //   errorCode: AuthErrorCodes.UNAUTHORIZED,
+    //   message: "Unauthorized",
+    //   details: null,
+    // });
+
+    return res.redirect(`${frontendURL}/login?error=unauthorised`);
   }
 
-  await authServices.signInWithOauth(user);
+  const userData = await authServices.signInWithOauth(user);
 
-  return successResponse({
-    res: res,
-    statusCode: 201,
-    data: null,
-    message: "user created successfully",
-  });
+  res
+    .cookie("access_token", userData.accessToken.token, {
+      httpOnly: true, // client side js can't read protect agains XSS attacks
+      secure: true, // htpps
+      sameSite: "none",
+      maxAge: userData.accessToken.maxAge, // time in milliseconds
+    })
+    .cookie("refresh_token", userData.refreshToken.token, {
+      httpOnly: true, // client side js can't read
+      secure: true, // https
+      sameSite: "none",
+      maxAge: userData.refreshToken.maxAge, // time in milliseconds
+    })
+    .cookie("csrf_token", userData.csrfToken, {
+      httpOnly: false, // exposing to client side js
+      sameSite: "none", // cross-site request
+      secure: true,
+    });
+
+  return res.redirect(`${frontendURL}/`);
 };
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -85,6 +106,30 @@ export const loginUser = async (req: Request, res: Response) => {
   });
 };
 
+export const me = async (req: Request, res: Response) => {
+  // check falsey state of req.user
+  if (!req.user) {
+    return errorResponse({
+      res: res,
+      statusCode: 401,
+      errorCode: AuthErrorCodes.UNAUTHORIZED,
+      message: "Unauthorized",
+      details: null,
+    });
+  }
+
+  const userClaim = req.user;
+
+  const user = await authServices.me(userClaim);
+
+  return successResponse<SafeUser>({
+    res: res,
+    statusCode: 200,
+    data: user,
+    message: "Success",
+  });
+};
+
 export const refreshUser = async (req: Request, res: Response) => {
   // check falsey state of req.user
   if (!req.user) {
@@ -97,14 +142,14 @@ export const refreshUser = async (req: Request, res: Response) => {
     });
   }
 
-  const user: UserClaim = req.user;
-  console.log("Log from refreshUser in auth controller:", user);
+  const userClaim: UserClaim = req.user;
+  console.log("Log from refreshUser in auth controller:", userClaim);
 
   // destructure the token from cookies
   const { refresh_token } = req.cookies;
 
   // generates a new refresh token and store it in DB
-  const tokens = await authServices.refresh(user, refresh_token);
+  const tokens = await authServices.refresh(userClaim, refresh_token);
 
   if (!tokens) {
     return errorResponse({
