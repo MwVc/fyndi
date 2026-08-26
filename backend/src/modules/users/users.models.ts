@@ -27,7 +27,13 @@ const getByEmail = async (email: string): Promise<DatabaseUser> => {
   return rows[0];
 };
 
+const getById = async (id: number): Promise<DatabaseUser> => {
+  const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+  return rows[0];
+};
+
 export const userModels = {
   insert,
   getByEmail,
+  getById,
 };
