@@ -13,5 +13,6 @@ declare module "express-serve-static-core" {
     // signedCookies: Record<string, string>;
     user?: UserClaim;
     oauthProfile?: OAuthProfile;
+    oauthError: unknown;
   }
 }
