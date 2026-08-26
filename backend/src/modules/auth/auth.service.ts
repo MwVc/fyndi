@@ -59,24 +59,16 @@ const signInWithOauth = async (profile: OAuthProfile) => {
   // console.log("users/services:", email, password, user);
 
   // if user does not exist insert new user
-  if (!user) {
-    try {
-      const user: DatabaseUser = await userModels.insert({
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        email: sanitizedEmail,
-        password: null,
-      });
-
-      console.log(user);
-
-      return completeSignIn(user);
-    } catch (error: any) {
-      // if (error.code === "23505") {
-      //   throw new ApiError(400, UserErrorCodes.USER_EXISTS, "User Exists", true);
-      // }
-      throw error;
-    }
+  if (user) {
+    return completeSignIn(user);
+  } else {
+    const user = await userModels.insert({
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      email: sanitizedEmail,
+      password: null,
+    });
+    return completeSignIn(user);
   }
 };
 
@@ -113,6 +105,24 @@ const login = async (userCredentials: LoginUserInput) => {
   }
 
   return completeSignIn(user);
+};
+
+const me = async (userClaim: UserClaim) => {
+  const { userId, role } = userClaim;
+  const user = await userModels.getById(Number(userId));
+
+  if (!user) {
+    throw new ApiError(404, UserErrorCodes.NOT_FOUND, "User not found", true);
+  }
+
+  const safeUser = {
+    firstName: user.first_name,
+    lastName: user.last_name,
+    id: user.id,
+    role: user.role,
+  };
+
+  return safeUser;
 };
 
 const refresh = async (userClaim: UserClaim, refresh_token: string) => {
@@ -162,14 +172,12 @@ const generateUserTokens = (userClaim: UserClaim) => {
 };
 
 const completeSignIn = async (user: DatabaseUser) => {
-  const {
-    first_name: firstName,
-    last_name: lastName,
-    created_at,
-    ...remainingData
-  } = user;
-
-  const safeUser = { firstName, lastName, ...remainingData }; // create user object that can be exposed to the client
+  const safeUser = {
+    firstName: user.first_name,
+    lastName: user.last_name,
+    id: user.id,
+    role: user.role,
+  }; // create user object that can be exposed to the client
 
   // create user claim
   const userClaim = claims.createClaims(user);
@@ -195,6 +203,7 @@ export const authServices = {
   register,
   signInWithOauth,
   login,
+  me,
   refresh,
   logout,
 };
