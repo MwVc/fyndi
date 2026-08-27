@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Main from "./components/Main";
-import { refreshLogin } from "./api/auth";
+import { me, refreshLogin } from "./api/auth";
 import Job from "./pages/Job";
 import FundiProfile from "./pages/FundiProfile";
 import { useContext } from "react";
@@ -14,9 +14,16 @@ const App = () => {
   const { setIsLoggedin } = useContext(UserContext);
 
   const checkLogin = async () => {
-    const response = await refreshLogin();
+    const meResponse = await me();
 
-    if (!response.success) {
+    if (meResponse.success) {
+      setIsLoggedin(true);
+      return;
+    }
+
+    const refreshResponse = await refreshLogin();
+
+    if (!refreshResponse.success) {
       return;
     }
 
@@ -26,7 +33,7 @@ const App = () => {
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", "light");
 
-    // refresh login on app start
+    // login user on app start
     checkLogin();
   }, []);
 
