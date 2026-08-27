@@ -41,6 +41,12 @@ export const loginUser = async (
   return response;
 };
 
+export const me = async (): Promise<ApiResult<null>> => {
+  const response: ApiResult<null> = await apiClient.post("/auth/me");
+
+  return response;
+};
+
 export const refreshLogin = async (): Promise<ApiResult<null>> => {
   console.log("Refresh endpoint hit");
   const response: ApiResult<null> = await apiClient.post("/auth/refresh");
