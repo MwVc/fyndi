@@ -111,7 +111,7 @@ const Login = () => {
                   ></path>
                 </g>
               </svg>
-              Login with Google
+              Signin with Google
             </button>
             {/* login with facebook */}
             <button className="btn bg-[#1A77F2] text-white border-[#005fd8]">
