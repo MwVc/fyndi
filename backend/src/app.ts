@@ -11,10 +11,15 @@ import { accessTokenMiddleware } from "./modules/auth/middlewares/verify_access_
 import { successResponse } from "./infrastructure/http/response.js";
 import passport from "passport";
 import "./modules/auth/oauth/google.strategy.js";
+import { logger } from "./infrastructure/logger/logger.js";
+import { httpLogger } from "./infrastructure/logger/httpLogger.js";
+
+logger.info("Fyndi server starting");
 
 const app = express();
 
 // middleware
+app.use(httpLogger);
 app.use(limiter);
 
 app.use(passport.initialize());
