@@ -10,7 +10,16 @@ const PORT = process.env.PORT;
 const isProd = process.env.NODE_ENV;
 const dbUrl = process.env.DATABASE_URL;
 
-console.log("From server.ts", PORT, isProd, dbUrl, "\n");
+console.log(
+  "From server.ts =>",
+  "PORT:",
+  PORT,
+  "; Environment: ",
+  isProd,
+  "; DB url: ",
+  dbUrl,
+  "\n"
+);
 
 if (isProd === "prod") {
   app.listen(PORT, () => console.log(`Server is listening on PORT: ${PORT}`));
