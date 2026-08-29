@@ -18,6 +18,7 @@ import type {
   RegisterUserInput,
 } from "./auth.types.js";
 import type { DatabaseUser } from "../users/users.types.js";
+import { logger } from "../../infrastructure/logger/logger.js";
 
 const register = async ({
   firstName,
@@ -135,7 +136,7 @@ const refresh = async (userClaim: UserClaim, refresh_token: string) => {
   );
 
   if (!getTokenResponse) {
-    console.log("getTokenResponse is false");
+    logger.info("getTokenResponse is false");
 
     // delete token
     const rowCount = await refreshTokenModels.deleteToken(refresh_token);
