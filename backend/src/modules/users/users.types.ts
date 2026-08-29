@@ -3,7 +3,7 @@ export type DatabaseUser = {
   first_name: string;
   last_name: string;
   email: string;
-  password: string;
+  password: string | null;
   role: "user" | "admin";
   created_at: Date;
 };
