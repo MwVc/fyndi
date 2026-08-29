@@ -4,6 +4,7 @@ import {
   loginUser,
   refreshUser,
   oauthSignIn,
+  me,
 } from "./auth.controller.js";
 import { logoutUser } from "./auth.controller.js";
 import { refreshTokenMiddleware } from "./middlewares/verify_refresh_token.middleware.js";
@@ -30,7 +31,7 @@ authRouter.get(
 authRouter.post("/register", registerUser);
 authRouter.post("/login", loginUser);
 authRouter.post("/refresh", refreshTokenMiddleware, refreshUser);
-authRouter.post("/me", accessTokenMiddleware, loginUser);
+authRouter.post("/me", accessTokenMiddleware, me);
 authRouter.post("/logout", refreshTokenMiddleware, logoutUser);
 
 export default authRouter;
