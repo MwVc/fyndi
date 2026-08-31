@@ -1,21 +1,18 @@
-import pino from "pino";
+import pino, { destination } from "pino";
 import path from "node:path";
 
 const logFile = path.join(process.cwd(), "logs", "app.log");
 
 export const logger = pino({
-  level: process.env.LOG_LEVEL ?? "info",
-  // base: undefined,
+  base: null,
+  level: process.env.PINO_LOG_LEVEL ?? "info",
 
-  // timestamp: () => `,"time":"${new Date().toISOString()}"`,
   transport: {
     targets: [
       {
-        target: "pino-pretty",
+        target: "pino/file",
         options: {
-          colorize: true,
-          translateTime: "SYS:standard",
-          ignore: "pid, hostname",
+          destination: 1,
         },
       },
       {
@@ -26,7 +23,7 @@ export const logger = pino({
           frequency: "daily",
           size: "10m",
           mkdir: true,
-          dateFormat: "yyyy-MM-dd",
+          dateFormat: "dd-MM-yyyy",
         },
       },
     ],
