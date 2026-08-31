@@ -35,7 +35,10 @@ CREATE TABLE oauth_accounts (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     provider VARCHAR(20),
-    provider_user_id VARCHAR(100)
+    provider_user_id VARCHAR(100),
+
+    -- multi-column constraint 
+    UNIQUE (provider, provider_user_id)
 );
 
 
@@ -57,7 +60,7 @@ CREATE TABLE fundis (
     phone_number VARCHAR(20),
     availability BOOLEAN DEFAULT true,
     rating NUMERIC(2,1) DEFAULT 0.0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMES~TAMP
 );
 
 CREATE TABLE categories(
