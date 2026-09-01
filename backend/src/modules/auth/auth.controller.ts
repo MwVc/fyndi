@@ -11,6 +11,7 @@ import type {
 } from "./auth.types.js";
 import type { UserClaim } from "./auth.claims.js";
 import { AuthErrorCodes } from "../../infrastructure/errors/code.errors.js";
+import { logger } from "../../infrastructure/logger/logger.js";
 
 const frontendURL = process.env.FRONTEND_URL;
 
@@ -35,40 +36,39 @@ export const oauthSignIn = async (req: Request, res: Response) => {
 
   const user = req.oauthProfile;
 
-  if (!user) {
-    // return errorResponse({
-    //   res: res,
-    //   statusCode: 401,
-    //   errorCode: AuthErrorCodes.UNAUTHORIZED,
-    //   message: "Unauthorized",
-    //   details: null,
-    // });
+  if (user) {
+    try {
+      const userData = await authServices.signInWithOauth(user);
 
-    return res.redirect(`${frontendURL}/login?error=unauthorised`);
+      if (userData) {
+        res
+          .cookie("access_token", userData.accessToken.token, {
+            httpOnly: true, // client side js can't read protect agains XSS attacks
+            secure: true, // htpps
+            sameSite: "none",
+            maxAge: userData.accessToken.maxAge, // time in milliseconds
+          })
+          .cookie("refresh_token", userData.refreshToken.token, {
+            httpOnly: true, // client side js can't read
+            secure: true, // https
+            sameSite: "none",
+            maxAge: userData.refreshToken.maxAge, // time in milliseconds
+          })
+          .cookie("csrf_token", userData.csrfToken, {
+            httpOnly: false, // exposing to client side js
+            sameSite: "none", // cross-site request
+            secure: true,
+          });
+
+        return res.redirect(`${frontendURL}/`);
+      }
+    } catch (error) {
+      logger.error({ error: error }, "OAuth sign-in failed");
+      return res.redirect(`${frontendURL}/login?error=oauth_failed`);
+    }
   }
 
-  const userData = await authServices.signInWithOauth(user);
-
-  res
-    .cookie("access_token", userData.accessToken.token, {
-      httpOnly: true, // client side js can't read protect agains XSS attacks
-      secure: true, // htpps
-      sameSite: "none",
-      maxAge: userData.accessToken.maxAge, // time in milliseconds
-    })
-    .cookie("refresh_token", userData.refreshToken.token, {
-      httpOnly: true, // client side js can't read
-      secure: true, // https
-      sameSite: "none",
-      maxAge: userData.refreshToken.maxAge, // time in milliseconds
-    })
-    .cookie("csrf_token", userData.csrfToken, {
-      httpOnly: false, // exposing to client side js
-      sameSite: "none", // cross-site request
-      secure: true,
-    });
-
-  return res.redirect(`${frontendURL}/`);
+  return res.redirect(`${frontendURL}/login?error=oauth_failed`);
 };
 
 export const loginUser = async (req: Request, res: Response) => {
