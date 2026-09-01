@@ -31,7 +31,7 @@ authRouter.get(
 authRouter.post("/register", registerUser);
 authRouter.post("/login", loginUser);
 authRouter.post("/refresh", refreshTokenMiddleware, refreshUser);
-authRouter.post("/me", accessTokenMiddleware, me);
+authRouter.get("/me", accessTokenMiddleware, me);
 authRouter.post("/logout", refreshTokenMiddleware, logoutUser);
 
 export default authRouter;
