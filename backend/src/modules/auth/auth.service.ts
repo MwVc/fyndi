@@ -19,6 +19,7 @@ import type {
 } from "./auth.types.js";
 import type { DatabaseUser } from "../users/users.types.js";
 import { logger } from "../../infrastructure/logger/logger.js";
+import pool from "../../infrastructure/db/pgPool.db.js";
 
 const register = async ({
   firstName,
@@ -52,24 +53,56 @@ const register = async ({
 };
 
 const signInWithOauth = async (profile: OAuthProfile) => {
-  // sanitize email input
-  const sanitizedEmail = profile.email.trim().toLocaleLowerCase();
-
   //check if user exists
-  const user = await userModels.getByEmail(sanitizedEmail);
+  const user = await userModels.getByEmail(profile.email);
   // console.log("users/services:", email, password, user);
 
-  // if user does not exist insert new user
-  if (user) {
-    return completeSignIn(user);
-  } else {
-    const user = await userModels.insert({
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      email: sanitizedEmail,
-      password: null,
-    });
-    return completeSignIn(user);
+  if (!user) {
+    // if user does not exist insert new user
+    const newUser = await createOauthUserTransaction(profile);
+
+    return completeSignIn(newUser);
+  }
+  return completeSignIn(user);
+};
+
+const createOauthUserTransaction = async (
+  profile: OAuthProfile
+): Promise<DatabaseUser> => {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const databaseUser = await userModels.insert(
+      {
+        avatar: profile.avatar,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        email: profile.email,
+        password: null,
+      },
+      client
+    );
+
+    await userModels.insertOauthAccount(
+      {
+        user_id: databaseUser.id,
+        provider: profile.provider,
+        provider_user_id: profile.providerUserId,
+      },
+      client
+    );
+
+    await client.query("COMMIT");
+
+    return databaseUser;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    logger.error({ err: error }, "Transaction error");
+    throw error;
+  } finally {
+    client.release();
   }
 };
 
