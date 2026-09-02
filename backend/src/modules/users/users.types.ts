@@ -1,4 +1,5 @@
 export type DatabaseUser = {
+  avatar: string | null;
   id: string;
   first_name: string;
   last_name: string;
@@ -9,6 +10,7 @@ export type DatabaseUser = {
 };
 
 export interface InsertUserData {
+  avatar?: string | null;
   firstName: string;
   lastName: string;
   email: string;
