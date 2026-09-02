@@ -106,30 +106,6 @@ export const loginUser = async (req: Request, res: Response) => {
   });
 };
 
-export const me = async (req: Request, res: Response) => {
-  // check falsey state of req.user
-  if (!req.user) {
-    return errorResponse({
-      res: res,
-      statusCode: 401,
-      errorCode: AuthErrorCodes.UNAUTHORIZED,
-      message: "Unauthorized",
-      details: null,
-    });
-  }
-
-  const userClaim = req.user;
-
-  const user = await authServices.me(userClaim);
-
-  return successResponse<SafeUser>({
-    res: res,
-    statusCode: 200,
-    data: user,
-    message: "Success",
-  });
-};
-
 export const refreshUser = async (req: Request, res: Response) => {
   // check falsey state of req.user
   if (!req.user) {
