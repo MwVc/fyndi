@@ -6,6 +6,7 @@ export const httpLogger = pinoHttp({
   serializers: {
     req(req) {
       return {
+        origin: req.headers.origin,
         id: req.id,
         method: req.method,
         url: req.url,
