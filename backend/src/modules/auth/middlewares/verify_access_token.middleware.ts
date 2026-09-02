@@ -3,6 +3,7 @@ import { errorResponse } from "../../../infrastructure/http/response.js";
 import { AuthErrorCodes } from "../../../infrastructure/errors/code.errors.js";
 import ApiError from "../../../infrastructure/errors/api.errors.js";
 import { verifyAccessToken } from "../../../infrastructure/security/jwt/jwt_token.js";
+import { logger } from "../../../infrastructure/logger/logger.js";
 
 export const accessTokenMiddleware = (
   req: Request,
@@ -12,6 +13,7 @@ export const accessTokenMiddleware = (
   const { access_token } = req.cookies;
 
   if (!access_token) {
+    logger.info("Access Token Does Not Exist");
     return errorResponse({
       res,
       statusCode: 401,
@@ -35,10 +37,12 @@ export const accessTokenMiddleware = (
 
     // const userClaim = { userId, role };
     req.user = userClaim;
+    logger.info("Access Token Check Successful");
 
     next();
     return;
   } catch (error) {
+    logger.info("Access Token Expired");
     return errorResponse({
       res,
       statusCode: 401,
