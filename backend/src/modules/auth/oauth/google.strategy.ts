@@ -26,8 +26,7 @@ passport.use(
 
     async (accessToken: any, refreshToken: any, profile: any, done: any) => {
       try {
-        console.log("google strategy hit\n");
-        console.log(profile);
+        console.log("Google strategy:", profile);
 
         return done(null, profile);
       } catch (error) {
