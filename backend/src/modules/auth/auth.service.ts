@@ -141,24 +141,6 @@ const login = async (userCredentials: LoginUserInput) => {
   return completeSignIn(user);
 };
 
-const me = async (userClaim: UserClaim) => {
-  const { userId, role } = userClaim;
-  const user = await userModels.getById(Number(userId));
-
-  if (!user) {
-    throw new ApiError(404, UserErrorCodes.NOT_FOUND, "User not found", true);
-  }
-
-  const safeUser = {
-    firstName: user.first_name,
-    lastName: user.last_name,
-    id: user.id,
-    role: user.role,
-  };
-
-  return safeUser;
-};
-
 const refresh = async (userClaim: UserClaim, refresh_token: string) => {
   console.log("Log from auth.service\n, User claim:", userClaim);
 
@@ -237,7 +219,6 @@ export const authServices = {
   register,
   signInWithOauth,
   login,
-  me,
   refresh,
   logout,
 };
