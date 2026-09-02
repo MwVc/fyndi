@@ -42,7 +42,7 @@ export const loginUser = async (
 };
 
 export const me = async (): Promise<ApiResult<null>> => {
-  const response: ApiResult<null> = await apiClient.post("/auth/me");
+  const response: ApiResult<null> = await apiClient.get("/auth/me");
 
   return response;
 };
